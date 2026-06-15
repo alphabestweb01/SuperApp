@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>AlphaBest App - Pahami Soal Sampai ke Dasar</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--toska:#12B5C1;--toska-d:#136F83;--toska-dd:#0A4A5A;--toska-l:#E0F7FA;--toska-ll:#F0FAFB;
+  --bg:#EFF6F7;--card:#fff;--tx:#1A2B2F;--txm:#5A7A80;--bdr:#D5E5E8;--sh:rgba(19,111,131,.1);--r:14px}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
+body{background:var(--bg);color:var(--tx);height:100vh;overflow:hidden;display:flex;justify-content:center}
+.app{width:100%;max-width:430px;height:100vh;position:relative;background:var(--bg);overflow:hidden;display:flex;flex-direction:column}
+#loader{position:fixed;inset:0;background:linear-gradient(135deg,var(--toska-dd),var(--toska-d),var(--toska));z-index:9999;display:flex;justify-content:center;align-items:center;flex-direction:column;color:#fff}
+.spinner{width:48px;height:48px;border:4px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;margin-bottom:18px}
+@keyframes spin{to{transform:rotate(360deg)}}
+#login-screen{position:fixed;inset:0;background:linear-gradient(135deg,var(--toska-dd),var(--toska-d),var(--toska));z-index:9000;display:none;justify-content:center;align-items:center;flex-direction:column;padding:24px}
+.login-box{background:#fff;padding:36px 28px;border-radius:24px;width:90%;max-width:370px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.2)}
+.login-logo{width:72px;height:72px;border-radius:18px;margin:0 auto 16px;overflow:hidden;box-shadow:0 4px 16px var(--sh)}
+.login-logo img{width:100%;height:100%;object-fit:cover}
+.hdr{background:linear-gradient(135deg,var(--toska-d),var(--toska-dd),var(--toska));padding:16px 18px 20px;color:#fff;position:relative;overflow:hidden;flex-shrink:0}
+.hdr::before{content:'';position:absolute;top:-35%;right:-20%;width:160px;height:160px;background:rgba(255,255,255,.04);border-radius:50%}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
+.hdr-logo{display:flex;align-items:center;gap:9px}
+.hdr-logo img{width:34px;height:34px;border-radius:9px;border:2px solid rgba(255,255,255,.25)}
+.hdr-logo span{font-weight:800;font-size:15px;letter-spacing:.3px}
+.hdr-prof{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.2);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px}
+.hdr-prof:active{background:rgba(255,255,255,.22)}
+.greet{margin-top:10px;position:relative;z-index:1}
+.greet-txt{font-size:13px;opacity:.85}
+.greet-nm{font-size:19px;font-weight:800;margin-top:1px}
+.clk-row{display:flex;gap:14px;margin-top:5px;font-size:11.5px;opacity:.8}
+.clk-row i{margin-right:3px;font-size:9px}
+.main-ct{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:80px}
+.main-ct::-webkit-scrollbar{width:0}
+.pg{display:none;animation:fu .28s ease}.pg.act{display:block;padding:0 14px 14px}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.cd{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:16px;box-shadow:0 2px 10px var(--sh);margin:10px 0}
+.dimg{margin:12px 0 0;border-radius:var(--r);overflow:hidden;box-shadow:0 3px 14px var(--sh);position:relative}
+.dimg img{width:100%;height:160px;object-fit:cover;display:block}
+.dimg-ov{position:absolute;bottom:0;left:0;right:0;height:50px;background:linear-gradient(transparent,rgba(10,74,90,.5))}
+.qt{background:linear-gradient(135deg,var(--toska-l),#fff);border:1px solid var(--bdr);border-radius:12px;padding:12px 14px 12px 34px;margin:10px 0;font-size:11.5px;line-height:1.6;color:var(--toska-d);font-style:italic;position:relative}
+.qt::before{content:'\f10d';font-family:'Font Awesome 6 Free';font-weight:900;position:absolute;top:10px;left:12px;font-size:13px;color:var(--toska);opacity:.2}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin:10px 0}
+.st{border-radius:12px;padding:11px 8px;color:#fff;text-align:center;position:relative;overflow:hidden}
+.st::after{content:'';position:absolute;top:-12px;right:-12px;width:40px;height:40px;background:rgba(255,255,255,.07);border-radius:50%}
+.st-n{font-size:20px;font-weight:900;line-height:1}
+.st-l{font-size:9.5px;opacity:.85;margin-top:2px}
+.st-s{font-size:8.5px;opacity:.6;margin-top:1px}
+.sc1{background:linear-gradient(135deg,#12B5C1,#0E9AA0)}.sc2{background:linear-gradient(135deg,#00B894,#00A381)}.sc3{background:linear-gradient(135deg,#4A90D9,#357ABD)}
+.kbm-i{display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:1px solid var(--bdr);font-size:11px}
+.kbm-i:last-child{border-bottom:none}
+.kbm-b{background:var(--toska-l);color:var(--toska-d);padding:3px 8px;border-radius:7px;font-weight:600;font-size:10px;white-space:nowrap}
+.kbm-m{color:var(--txm);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kbm-t{font-size:10px;color:var(--txm);white-space:nowrap}
+.sec-t{font-size:13px;font-weight:700;color:var(--toska-d);margin:14px 0 10px;display:flex;align-items:center;gap:7px}
+.sec-t::after{content:'';flex:1;height:1.5px;background:linear-gradient(90deg,var(--bdr),transparent)}
+.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:8px}
+.mi{display:flex;flex-direction:column;align-items:center;gap:7px;padding:15px 6px;border-radius:16px;background:var(--card);border:1px solid var(--bdr);cursor:pointer;transition:transform .12s;box-shadow:0 2px 8px var(--sh)}
+.mi:active{transform:scale(.93)}
+.mic{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff}
+.mil{font-size:10px;font-weight:600;text-align:center;line-height:1.25;color:var(--tx)}
+.subh{background:linear-gradient(135deg,var(--toska-d),var(--toska));padding:13px 16px;color:#fff;display:flex;align-items:center;gap:11px;flex-shrink:0}
+.subh .bk{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.12);border:none;color:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.subh .bk:active{background:rgba(255,255,255,.2)}
+.subh h2{font-size:15px;font-weight:700;flex:1}
+.subh .bdg{background:rgba(255,255,255,.12);padding:3px 10px;border-radius:7px;font-size:10px;font-weight:600}
+.lc{background:var(--card);border:1px solid var(--bdr);border-radius:12px;margin:7px 0;overflow:hidden;box-shadow:0 2px 8px var(--sh);cursor:pointer;transition:transform .12s}
+.lc:active{transform:scale(.98)}
+.lci{padding:12px 14px;display:flex;align-items:center;gap:11px}
+.lc-ic{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;flex-shrink:0}
+.lc-nfo{flex:1;min-width:0}
+.lc-nfo h4{font-size:12px;font-weight:700}
+.lc-nfo p{font-size:10px;color:var(--txm);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lc-arr{color:var(--txm);font-size:11px;flex-shrink:0}
+.bc{display:flex;align-items:center;gap:5px;padding:10px 0;font-size:11px;flex-wrap:wrap}
+.bc span{color:var(--txm);cursor:pointer}.bc span.act{color:var(--toska-d);font-weight:600;cursor:default}
+.bc i{font-size:8px;color:var(--bdr)}
+.tabs{display:flex;gap:7px;margin:10px 0;overflow-x:auto;padding-bottom:3px}
+.tbtn{padding:7px 14px;border-radius:9px;border:1.5px solid var(--bdr);background:var(--card);font-size:11px;font-weight:600;color:var(--txm);cursor:pointer;white-space:nowrap;font-family:inherit}
+.tbtn.act{background:var(--toska);color:#fff;border-color:var(--toska)}
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:11px;font-weight:600;color:var(--toska-d);margin-bottom:5px}
+.fg input,.fg textarea,.fg select{width:100%;padding:11px 13px;border-radius:11px;border:1.5px solid var(--bdr);background:var(--card);color:var(--tx);font-size:12.5px;font-family:inherit;outline:none}
+.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--toska);box-shadow:0 0 0 3px rgba(18,181,193,.08)}
+.fg textarea{resize:vertical;min-height:60px}
+.btn{padding:11px 20px;border:none;border-radius:40px;cursor:pointer;font-weight:700;font-size:13px;transition:.15s;display:inline-flex;align-items:center;gap:7px;font-family:inherit}
+.btn:active{transform:scale(.96)}
+.btn-full{width:100%}
+.btn-t{background:linear-gradient(135deg,var(--toska),var(--toska-d));color:#fff}
+.btn-g{background:linear-gradient(135deg,#25D366,#128C7E);color:#fff}
+.btn-r{background:linear-gradient(135deg,#FF6B6B,#ee5a5a);color:#fff}
+.btn-a{background:linear-gradient(135deg,#F0A500,#D4940A);color:#fff}
+.btn-sm{padding:8px 14px;font-size:11px;border-radius:10px}
+.prof-h{text-align:center;padding:18px 0 12px}
+.prof-av{width:72px;height:72px;border-radius:50%;background:var(--toska-l);border:3px solid var(--toska);display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:28px;color:var(--toska);overflow:hidden}
+.prof-av img{width:100%;height:100%;object-fit:cover}
+.prof-nm{font-size:16px;font-weight:800;margin-top:8px}
+.prof-rl{font-size:11px;color:var(--txm);margin-top:1px}
+.pf{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:11px 14px;margin:7px 0;box-shadow:0 2px 8px var(--sh)}
+.pf label{font-size:9px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.3px}
+.pf p{font-size:12.5px;font-weight:600;margin-top:2px}
+.foto-up{position:relative;cursor:pointer}
+.foto-up input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.chat-box{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;box-shadow:0 2px 10px var(--sh)}
+.chat-msgs{height:380px;overflow-y:auto;padding:14px;display:flex;flex-direction:column}
+.chat-msgs::-webkit-scrollbar{width:0}
+.msg{max-width:80%;padding:10px 14px;border-radius:14px;margin-bottom:8px;font-size:12.5px;line-height:1.5;word-wrap:break-word}
+.msg.bot{background:var(--toska-l);color:var(--toska-dd);border-bottom-left-radius:4px;align-self:flex-start}
+.msg.user{background:var(--toska-d);color:#fff;border-bottom-right-radius:4px;margin-left:auto}
+.chat-in{display:flex;padding:10px;gap:8px;border-top:1px solid var(--bdr)}
+.chat-in input{flex:1;padding:10px 13px;border-radius:10px;border:1.5px solid var(--bdr);font-size:12.5px;font-family:inherit;outline:none}
+.chat-in input:focus{border-color:var(--toska)}
+.calc-disp{background:var(--toska-dd);color:#fff;padding:18px 14px;border-radius:var(--r);text-align:right;margin-bottom:10px}
+.calc-disp input{width:100%;background:transparent;border:none;color:#fff;font-size:26px;font-weight:800;text-align:right;outline:none;font-family:inherit}
+.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.calc-b{padding:14px;text-align:center;border-radius:11px;cursor:pointer;font-weight:700;font-size:16px;background:var(--card);color:var(--tx);border:1px solid var(--bdr);font-family:inherit}
+.calc-b:active{transform:scale(.92)}
+.calc-b.op{background:var(--toska-l);color:var(--toska-d);border-color:var(--toska)}
+.calc-b.eq{background:linear-gradient(135deg,var(--toska),var(--toska-d));color:#fff;border:none}
+.calc-b.cl{background:#FF6B6B;color:#fff;border:none}
+.alm-item{background:var(--toska-ll);border:1px solid var(--bdr);padding:12px;border-radius:12px;margin-bottom:8px}
+.alm-btn{background:var(--toska);border:none;padding:5px 12px;border-radius:20px;color:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit}
+.ak-i{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)}
+.ak-i:last-child{border-bottom:none}
+.ak-d{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.ak-n h4{font-size:12px;font-weight:600}.ak-n p{font-size:10px;color:var(--txm);margin-top:1px}
+.wlc{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:14px;margin:7px 0;display:flex;align-items:center;gap:11px;cursor:pointer;transition:transform .12s;box-shadow:0 2px 8px var(--sh);text-decoration:none;color:var(--tx)}
+.wlc:active{transform:scale(.98)}
+.wlc-i{width:40px;height:40px;border-radius:11px;background:var(--toska-l);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--toska);flex-shrink:0}
+.wlc-n h4{font-size:12px;font-weight:700}
+.wlc-n p{font-size:10px;color:var(--txm);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px}
+.adm-sec{margin:18px 0}
+.adm-sec h3{font-size:13px;font-weight:700;color:var(--toska-d);margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.adm-item{background:var(--toska-ll);border:1px solid var(--bdr);padding:10px 14px;border-radius:10px;margin-bottom:6px;font-size:12px;display:flex;align-items:center;justify-content:space-between}
+.adm-item button{background:transparent;border:1.5px solid #FF6B6B;color:#FF6B6B;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center}
+.adm-item button:active{background:#FF6B6B;color:#fff}
+.conn-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px}
+.conn-on{background:#00B894}.conn-off{background:#FF6B6B}
+.empty{text-align:center;padding:32px 16px;color:var(--txm)}
+.empty i{font-size:34px;margin-bottom:10px;opacity:.3;display:block}
+.empty p{font-size:12px}
+.bbar{position:absolute;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-around;padding:6px 6px 9px;z-index:100;transition:transform .3s cubic-bezier(.4,0,.2,1);box-shadow:0 -3px 14px var(--sh)}
+.bbar.hid{transform:translateY(100%)}
+.bb{width:44px;height:44px;border-radius:12px;border:none;background:transparent;color:var(--txm);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.12s}
+.bb.act{color:var(--toska);background:var(--toska-l)}
+.bb:active{transform:scale(.87)}
+.bbtog{position:absolute;bottom:0;left:50%;transform:translateX(-50%);z-index:101;pointer-events:none}
+.bbtog button{pointer-events:all;width:38px;height:18px;border-radius:9px 9px 0 0;background:var(--card);border:1px solid var(--bdr);border-bottom:none;color:var(--txm);font-size:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 -2px 6px var(--sh)}
+.mov{position:fixed;inset:0;background:rgba(10,74,90,.4);backdrop-filter:blur(3px);z-index:200;display:none;align-items:flex-end;justify-content:center}
+.mov.show{display:flex}
+.mc{background:var(--card);border-radius:18px 18px 0 0;width:100%;max-width:430px;padding:20px 18px 26px;animation:su .25s ease}
+@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.mh{width:34px;height:4px;background:var(--bdr);border-radius:2px;margin:0 auto 14px}
+.mt{font-size:15px;font-weight:800;color:var(--toska-d);margin-bottom:12px}
+.wa-ic{width:54px;height:54px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff;margin:0 auto 10px;box-shadow:0 4px 16px rgba(37,211,102,.25)}
+.wa-nm{font-size:16px;font-weight:700;margin:6px 0}
+.wa-lb{font-size:11px;color:var(--txm);margin-bottom:12px}
+.wa-b{display:inline-flex;align-items:center;gap:6px;padding:10px 22px;border-radius:12px;background:#25D366;color:#fff;font-size:13px;font-weight:700;border:none;cursor:pointer;font-family:inherit;text-decoration:none}
+.wa-b:active{transform:scale(.95)}
+.wa-bo{background:transparent;border:2px solid #25D366;color:#25D366}
+#toast-container{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:10000;width:90%;max-width:360px;display:flex;flex-direction:column;align-items:center;pointer-events:none}
+.toast{background:var(--toska-d);color:#fff;padding:10px 20px;border-radius:40px;margin-bottom:8px;font-size:12px;font-weight:600;animation:tsIn .25s,tsOut .4s 2.4s forwards;box-shadow:0 6px 20px rgba(0,0,0,.18);pointer-events:auto;text-align:center}
+@keyframes tsIn{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes tsOut{to{opacity:0;transform:translateY(-20px)}}
+@media(min-width:431px){body{background:#c5d8da}.app{box-shadow:0 0 40px rgba(0,0,0,.15);margin:8px 0;border-radius:20px;height:calc(100vh - 16px);overflow:hidden}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+<div id="loader"><div class="spinner"></div><h2 style="font-size:20px">AlphaBest</h2><p style="opacity:.7;font-size:13px">Bimbel Tepat Guna...</p></div>
+
+<div id="login-screen" style="display:none">
+<div class="login-box">
+  <div class="login-logo"><img src="https://i.postimg.cc/cHtSvQ6r/alphabest.jpg" alt="AlphaBest"></div>
+  <h2 style="margin-bottom:16px;color:var(--toska-d);font-size:20px">AlphaBest</h2>
+  <div class="fg"><input type="text" id="username" placeholder="Nama / Username" style="border-radius:12px;border:1.5px solid var(--bdr)"></div>
+  <div class="fg"><input type="password" id="password" placeholder="Password" style="border-radius:12px;border:1.5px solid var(--bdr)"></div>
+  <button class="btn btn-t btn-full" onclick="handleLogin()">MASUK</button>
+  <p style="margin-top:14px;font-size:11px;color:var(--txm)">Siswa: Nama Kamu | Pass: minta ke admin ya!<br>Admin: admin-alpha | Pass: *****</p>
+</div>
+</div>
+
+<div id="app-container" style="display:none;flex-direction:column;height:100%">
+
+<div class="hdr" id="mainHeader">
+  <div class="hdr-top">
+    <div class="hdr-logo"><img src="https://i.postimg.cc/cHtSvQ6r/alphabest.jpg" alt=""><span>AlphaBest</span></div>
+    <div class="hdr-prof" onclick="navigate('profil')"><i class="fas fa-user"></i></div>
+  </div>
+  <div class="greet">
+    <div class="greet-txt" id="greetTxt">Selamat Pagi,</div>
+    <div class="greet-nm" id="greetNm">Siswa</div>
+    <div class="clk-row"><span><i class="fas fa-clock"></i> <span id="dClk">00:00:00</span></span><span><i class="fas fa-calendar-day"></i> <span id="dDat">-</span></span></div>
+  </div>
+</div>
+
+<div class="subh" id="subHeader" style="display:none">
+  <button class="bk" id="subBack" onclick="goHome()"><i class="fas fa-arrow-left"></i></button>
+  <h2 id="subTitle">-</h2>
+  <span class="bdg" id="subBadge" style="display:none"></span>
+</div>
+
+<div class="main-ct">
+
+<section id="page-home" class="pg act">
+  <div class="dimg"><img id="dailyImage" src="" alt="Inspirasi"><div class="dimg-ov"></div></div>
+  <div class="qt" id="quoteCard">Memuat motivasi...</div>
+  <div class="stats">
+    <div class="st sc1"><div class="st-n" id="stSiswa">0</div><div class="st-l">Siswa Aktif</div><div class="st-s" id="stSiswaS">-</div></div>
+    <div class="st sc2"><div class="st-n" id="stKelas">0</div><div class="st-l">Jumlah Kelas</div><div class="st-s" id="stKelasS">-</div></div>
+    <div class="st sc3"><div class="st-n" id="stKbm">0</div><div class="st-l">KBM Hari Ini</div><div class="st-s">Aktif</div></div>
+  </div>
+  <div class="cd"><div style="font-size:12px;font-weight:700;color:var(--toska-d);margin-bottom:8px"><i class="fas fa-chalkboard-teacher"></i> KBM Aktif Hari Ini</div><div id="kbmList"><div class="empty" style="padding:6px"><p>-</p></div></div></div>
+  <div class="sec-t">Menu Utama</div>
+  <div class="mgrid">
+    <div class="mi" onclick="navigate('modul')"><div class="mic" style="background:linear-gradient(135deg,#12B5C1,#0E9AA0)"><i class="fas fa-book-open"></i></div><div class="mil">Modul</div></div>
+    <div class="mi" onclick="navigate('to')"><div class="mic" style="background:linear-gradient(135deg,#FF6B6B,#ee5a5a)"><i class="fas fa-pen-fancy"></i></div><div class="mil">Try Out</div></div>
+    <div class="mi" onclick="navigate('kamus')"><div class="mic" style="background:linear-gradient(135deg,#F0A500,#D4940A)"><i class="fas fa-language"></i></div><div class="mil">Kamus</div></div>
+    <div class="mi" onclick="navigate('kalkulator')"><div class="mic" style="background:linear-gradient(135deg,#00B894,#00A381)"><i class="fas fa-calculator"></i></div><div class="mil">Kalkulator</div></div>
+    <div class="mi" onclick="navigate('jadwal')"><div class="mic" style="background:linear-gradient(135deg,#4A90D9,#357ABD)"><i class="fas fa-calendar-alt"></i></div><div class="mil">Jadwal</div></div>
+    <div class="mi" onclick="navigate('absen')"><div class="mic" style="background:linear-gradient(135deg,#E17055,#C0513E)"><i class="fas fa-qrcode"></i></div><div class="mil">Absen QR</div></div>
+    <div class="mi" onclick="navigate('analisa')"><div class="mic" style="background:linear-gradient(135deg,#00CEC9,#00A8A8)"><i class="fas fa-chart-line"></i></div><div class="mil">Analisa</div></div>
+    <div class="mi" onclick="navigate('psikotes')"><div class="mic" style="background:linear-gradient(135deg,#F78FB3,#E84393)"><i class="fas fa-brain"></i></div><div class="mil">Psikotes</div></div>
+    <div class="mi" onclick="navigate('bk')"><div class="mic" style="background:linear-gradient(135deg,#55E6C1,#2ECC71)"><i class="fas fa-comments"></i></div><div class="mil">Konseling</div></div>
+    <div class="mi" onclick="navigate('myweb')"><div class="mic" style="background:linear-gradient(135deg,#A29BFE,#6C5CE7)"><i class="fas fa-globe"></i></div><div class="mil">My Web</div></div>
+    <div class="mi" onclick="navigate('profil')"><div class="mic" style="background:linear-gradient(135deg,#2ECC71,#27AE60)"><i class="fas fa-user-circle"></i></div><div class="mil">Profil</div></div>
+    <div class="mi" onclick="navigate('aktivitas')"><div class="mic" style="background:linear-gradient(135deg,#FD79A8,#E84393)"><i class="fas fa-history"></i></div><div class="mil">Aktivitas</div></div>
+  </div>
+</section>
+
+<section id="page-modul" class="pg"><div class="bc" id="modBc"></div><div id="modCt"></div></section>
+
+<section id="page-to" class="pg"><h2 style="font-size:15px;font-weight:800;color:var(--toska-d);margin-bottom:12px">Try Out Online</h2><div id="to-container"></div></section>
+
+<section id="page-analisa" class="pg"><div class="cd" style="text-align:center"><h3 style="color:var(--toska-d)"><i class="fas fa-chart-bar"></i> Analisa SNBP & SNBT</h3><p style="font-size:12px;color:var(--txm);margin:8px 0">Analisis kemampuan akademikmu</p><button class="btn btn-t" onclick="openAnalisaLink()"><i class="fas fa-external-link-alt"></i> Mulai Analisa</button></div></section>
+
+<section id="page-psikotes" class="pg"><div class="cd" style="text-align:center"><h3 style="color:var(--toska-d)"><i class="fas fa-brain"></i> Psikotes Minat & Bakat</h3><p style="font-size:12px;color:var(--txm);margin:8px 0">Kenali potensi dirimu</p><button class="btn btn-a" onclick="openPsikotesLink()"><i class="fas fa-external-link-alt"></i> Mulai Psikotes</button></div></section>
+
+<section id="page-absen" class="pg">
+  <div class="tabs" id="absCabTabs"></div>
+  <div class="cd" style="text-align:center">
+    <h3 style="color:var(--toska-d);font-size:14px"><i class="fas fa-qrcode"></i> Absen Digital</h3>
+    <div style="text-align:left;margin-top:12px">
+      <div class="fg"><input type="text" id="absen-nama" placeholder="Nama lengkap"></div>
+      <div class="fg"><input type="text" id="absen-kelas" placeholder="Kelas"></div>
+      <div class="fg"><input type="text" id="absen-cabang" placeholder="Cabang"></div>
+      <div class="fg"><input type="text" id="absen-nis" placeholder="NIS"></div>
+    </div>
+    <button class="btn btn-t btn-full" onclick="generateAndSave()"><i class="fas fa-qrcode"></i> Generate QR & Absen</button>
+    <div id="qrcode-container" style="margin-top:16px"><div id="qrcode"></div></div>
+  </div>
+</section>
+
+<section id="page-bk" class="pg">
+  <div class="cd" style="margin-bottom:0"><h3 style="color:var(--toska-d);font-size:14px"><i class="fas fa-comments"></i> Konseling Akademik & Mental</h3></div>
+  <div class="chat-box" style="margin-top:8px">
+    <div id="chat-messages" class="chat-msgs"></div>
+    <div class="chat-in">
+      <input type="text" id="chat-input" placeholder="Tanya Kakak Konselor..." onkeypress="if(event.key==='Enter')sendMessage()">
+      <button class="btn btn-t btn-sm" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+</section>
+
+<section id="page-kamus" class="pg">
+  <div class="cd">
+    <h3 style="color:var(--toska-d);font-size:14px"><i class="fas fa-globe"></i> Penerjemah</h3>
+    <div class="fg"><label>Kata / Kalimat</label><input type="text" id="translate-text" placeholder="Tulis sesuatu..."></div>
+    <div class="fg"><label>Ke Bahasa</label><select id="translate-lang"><option value="id">Indonesia</option><option value="en">Inggris</option><option value="ar">Arab</option><option value="zh-CN">Mandarin</option><option value="ja">Jepang</option></select></div>
+    <button class="btn btn-t btn-full" onclick="translateText()"><i class="fas fa-language"></i> Terjemahkan</button>
+    <div class="fg" style="margin-top:12px"><label>Hasil</label><textarea id="translate-result" rows="3" readonly></textarea></div>
+  </div>
+</section>
+
+<section id="page-kalkulator" class="pg">
+  <div class="cd">
+    <h3 style="color:var(--toska-d);font-size:14px;margin-bottom:10px"><i class="fas fa-calculator"></i> Kalkulator</h3>
+    <div class="calc-disp"><input type="text" id="calc-display" readonly></div>
+    <div class="calc-grid">
+      <div class="calc-b cl" onclick="clearCalc()">C</div>
+      <div class="calc-b op" onclick="calcAppend('/')">/</div>
+      <div class="calc-b op" onclick="calcAppend('*')">x</div>
+      <div class="calc-b op" onclick="calcAppend('-')">-</div>
+      <div class="calc-b" onclick="calcAppend('7')">7</div><div class="calc-b" onclick="calcAppend('8')">8</div><div class="calc-b" onclick="calcAppend('9')">9</div><div class="calc-b op" onclick="calcAppend('+')">+</div>
+      <div class="calc-b" onclick="calcAppend('4')">4</div><div class="calc-b" onclick="calcAppend('5')">5</div><div class="calc-b" onclick="calcAppend('6')">6</div>
+      <div class="calc-b" onclick="calcAppend('1')">1</div><div class="calc-b" onclick="calcAppend('2')">2</div><div class="calc-b" onclick="calcAppend('3')">3</div>
+      <div class="calc-b" onclick="calcAppend('0')" style="grid-column:span 2">0</div>
+      <div class="calc-b" onclick="calcAppend('.')">.</div>
+      <div class="calc-b eq" onclick="calcResult()">=</div>
+    </div>
+  </div>
+</section>
+
+<section id="page-jadwal" class="pg">
+  <h2 style="font-size:15px;font-weight:800;color:var(--toska-d);margin-bottom:10px"><i class="fas fa-calendar-alt"></i> Jadwal & Alarm</h2>
+  <div class="cd">
+    <div class="fg"><label>Pilih Cabang</label><select id="filter-cabang" onchange="loadJadwal()"></select></div>
+    <div id="jadwal-list"></div>
+  </div>
+</section>
+
+<section id="page-myweb" class="pg"><h2 style="font-size:15px;font-weight:800;color:var(--toska-d);margin-bottom:10px"><i class="fas fa-globe"></i> My Web</h2><div id="mywebCt"></div></section>
+
+<section id="page-profil" class="pg"><div id="profilCt"></div></section>
+
+<section id="page-aktivitas" class="pg"><h2 style="font-size:15px;font-weight:800;color:var(--toska-d);margin-bottom:10px"><i class="fas fa-history"></i> Ringkasan Aktivitas</h2><div id="aktCt"></div></section>
+
+<section id="page-admin" class="pg">
+  <h2 style="font-size:15px;font-weight:800;color:var(--toska-d);margin-bottom:6px">Admin Dashboard</h2>
+  <div class="cd"><div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--toska-d)"><span class="conn-dot conn-off" id="connDot"></span><span id="connTxt">Belum terhubung</span></div></div>
+  <div class="adm-sec"><h3><i class="fas fa-link" style="color:var(--toska)"></i> Koneksi Spreadsheet</h3>
+    <div class="fg"><label>URL Web App (Google Apps Script)</label><input type="text" id="adm-api-url" placeholder="https://script.google.com/macros/s/xxx/exec"></div>
+    <div style="display:flex;gap:8px"><button class="btn btn-t btn-sm" onclick="saveApiUrl()"><i class="fas fa-save"></i> Simpan</button><button class="btn btn-sm" style="background:var(--toska-l);color:var(--toska-d);border:1px solid var(--bdr)" onclick="testConn()"><i class="fas fa-wifi"></i> Test</button></div>
+  </div>
+  <div class="adm-sec"><h3><i class="fas fa-key" style="color:#F0A500"></i> API & Links</h3>
+    <div class="fg"><label>OpenRouter/Groq API Key</label><input type="password" id="admin-apikey" placeholder="sk-..."></div>
+    <div class="fg"><label>Link Analisa (SNBP/SNBT)</label><input type="text" id="adm-link-analisa" placeholder="https://..."></div>
+    <div class="fg"><label>Link Psikotes</label><input type="text" id="adm-link-psikotes" placeholder="https://..."></div>
+    <div class="fg"><label>Nomor WhatsApp Admin (62xxx)</label><input type="text" id="adm-wa-num" placeholder="6281234567890"></div>
+    <button class="btn btn-t btn-full" onclick="saveSettings()"><i class="fas fa-save"></i> Simpan Semua</button>
+  </div>
+  <div class="adm-sec"><h3><i class="fas fa-book" style="color:#12B5C1"></i> Kelola Modul</h3><button class="btn btn-t btn-sm" onclick="showModulForm()"><i class="fas fa-plus"></i> Tambah</button><div id="table-modul" style="margin-top:8px"></div></div>
+  <div class="adm-sec"><h3><i class="fas fa-pen-fancy" style="color:#FF6B6B"></i> Kelola Try Out</h3><button class="btn btn-t btn-sm" onclick="showTOForm()"><i class="fas fa-plus"></i> Tambah</button><div id="table-to" style="margin-top:8px"></div></div>
+  <div class="adm-sec"><h3><i class="fas fa-calendar" style="color:#4A90D9"></i> Kelola Jadwal</h3><button class="btn btn-t btn-sm" onclick="showJadwalForm()"><i class="fas fa-plus"></i> Tambah</button><div id="table-jadwal" style="margin-top:8px"></div></div>
+  <div class="adm-sec"><h3><i class="fas fa-globe" style="color:#A29BFE"></i> Menu Web Kami</h3><button class="btn btn-t btn-sm" onclick="showWebLinkForm()"><i class="fas fa-plus"></i> Tambah</button><div id="table-weblinks" style="margin-top:8px"></div></div>
+  <div style="margin:24px 0 16px"><button class="btn btn-r btn-full" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Keluar</button></div>
+</section>
+
+</div>
+
+<div class="bbtog" id="bbTogW"><button onclick="togBB()" id="bbTogB"><i class="fas fa-chevron-down"></i></button></div>
+<div class="bbar" id="bBar">
+  <button class="bb act" onclick="navigate('home')"><i class="fas fa-home"></i></button>
+  <button class="bb" onclick="navigate('modul')"><i class="fas fa-book-open"></i></button>
+  <button class="bb" onclick="navigate('absen')"><i class="fas fa-qrcode"></i></button>
+  <button class="bb" onclick="navigate('profil')"><i class="fas fa-user"></i></button>
+  <button class="bb" onclick="openWA()" style="color:#25D366"><i class="fab fa-whatsapp"></i></button>
+</div>
+
+</div>
+
+<div class="mov" id="waMov">
+  <div class="mc" style="text-align:center">
+    <div class="mh"></div>
+    <div class="wa-ic"><i class="fab fa-whatsapp"></i></div>
+    <div class="mt">Hubungi Admin</div>
+    <div class="wa-lb">Nomor WhatsApp Admin</div>
+    <div class="wa-nm" id="waDisp">Belum diatur</div>
+    <div style="margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+      <a class="wa-b" id="waChat" href="#" target="_blank" style="display:none"><i class="fab fa-whatsapp"></i> Chat</a>
+      <button class="wa-b wa-bo" onclick="closeWA()">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+</div>
+
+<script>
+/* === KONFIGURASI === */
+function getApiUrl(){return localStorage.getItem('ab_api_url')||"https://script.google.com/macros/s/AKfycbwRJxHwYeZ2Lalf254BAhfwLIOqd_VM05T6P7bE8JA7BazqPwZSK-HrbeJqeGLmhFsZ/exec"}
+
+/* === DATA STATE === */
+let appData={settings:{apiKey:'',linkAnalisa:'',linkPsikotes:'',waAdmin:''},modul:[],tryout:[],jadwal:[],webLinks:[]};
+let currentUser={role:'siswa',name:'Pengguna'};
+let modLv=0,modKls=null,modMap=null;
+let absCab='',absData={};
+let bbVis=true;
+
+/* === UTILITAS === */
+const K='ab_';
+function ls(k,v){if(v===undefined){try{return JSON.parse(localStorage.getItem(K+k))}catch(e){return null}}localStorage.setItem(K+k,JSON.stringify(v))}
+function showToast(msg){let t=document.createElement('div');t.className='toast';t.innerText=msg;document.getElementById('toast-container').appendChild(t);setTimeout(function(){t.remove()},3000)}
+function greetStr(){var h=new Date().getHours();if(h<11)return'Selamat Pagi,';if(h<15)return'Selamat Siang,';if(h<18)return'Selamat Sore,';return'Selamat Malam,'}
+function dayName(d){return['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][d.getDay()]}
+function monthName(m){return['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'][m]}
+function dailySeed(){var d=new Date();return d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate()}
+function esc(s){return String(s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;')}
+
+function updateClock(){
+  var n=new Date();
+  var el=document.getElementById('dClk');
+  if(el) el.textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+':'+String(n.getSeconds()).padStart(2,'0');
+  var dl=document.getElementById('dDat');
+  if(dl) dl.textContent=dayName(n)+', '+n.getDate()+' '+monthName(n.getMonth())+' '+n.getFullYear();
+}
+setInterval(updateClock,1000);
+
+/* === API === */
+async function loadDataFromBackend(){
+  var url=getApiUrl();if(!url)return;
+  try{var res=await fetch(url+"?action=getData");var data=await res.json();appData=data;renderAll();testConnSilent()}catch(e){console.log('Load error:',e)}
+}
+async function postData(action,params){
+  var url=getApiUrl();if(!url)return{status:'error',message:'URL belum diatur'};
+  var fd=new FormData();fd.append('action',action);for(var k in params)fd.append(k,params[k]);
+  return fetch(url,{method:'POST',body:fd}).then(function(r){return r.json()}).catch(function(e){return{status:'error',message:e.message}});
+}
+async function testConnSilent(){
+  var url=getApiUrl();if(!url)return;
+  try{var r=await fetch(url+"?action=ping");var d=await r.json();
+    var dot=document.getElementById('connDot');if(dot) dot.className='conn-dot '+(d.status==='ok'?'conn-on':'conn-off');
+    var txt=document.getElementById('connTxt');if(txt) txt.textContent=d.status==='ok'?'Terhubung':'Gagal';
+  }catch(e){var dot2=document.getElementById('connDot');if(dot2)dot2.className='conn-dot conn-off';var txt2=document.getElementById('connTxt');if(txt2)txt2.textContent='Tidak tersambung'}
+}
+async function testConn(){await testConnSilent();showToast(document.getElementById('connTxt').textContent)}
+
+/* === INIT === */
+window.onload=function(){
+  setTimeout(function(){
+    document.getElementById('loader').style.display='none';
+    document.getElementById('login-screen').style.display='flex';
+  },1200);
+  loadDataFromBackend();
+};
+
+/* === LOGIN === */
+function handleLogin(){
+  var u=document.getElementById('username').value,p=document.getElementById('password').value;
+  if(u==='admin-alpha'&&p==='4lph@01'){currentUser={role:'admin',name:'Admin'};showToast("Welcome Admin!");enterApp()}
+  else if(p==='4lphastd'){currentUser={role:'siswa',name:u||'Siswa'};showToast("Halo "+currentUser.name+"!");enterApp()}
+  else showToast("Password salah!");
+}
+function enterApp(){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app-container').style.display='flex';
+  navigate(currentUser.role==='admin'?'admin':'home');
+  if(currentUser.role==='siswa'){initChat();loadMotivationAndImage();loadJadwalCabangSelect()}
+  if(currentUser.role==='admin'){testConnSilent();fillSettingsForm()}
+  updateClock();
+  history.replaceState({page:'home'},'');
+}
+function handleLogout(){location.reload()}
+
+/* === NAVIGASI === */
+function navigate(page){
+  document.querySelectorAll('.pg').forEach(function(el){el.classList.remove('act')});
+  var target=document.getElementById('page-'+page);
+  if(target)target.classList.add('act');
+  var isHome=(page==='home');
+  document.getElementById('mainHeader').style.display=isHome?'block':'none';
+  document.getElementById('subHeader').style.display=isHome?'none':'flex';
+  if(!isHome){
+    var titles={modul:'Modul Pelajaran',to:'Try Out',kamus:'Penerjemah',kalkulator:'Kalkulator',jadwal:'Jadwal & Alarm',absen:'Absen Digital',analisa:'Analisa',psikotes:'Psikotes',bk:'Konseling',myweb:'My Web',profil:'Profil Saya',aktivitas:'Ringkasan Aktivitas',admin:'Admin Dashboard'};
+    document.getElementById('subTitle').textContent=titles[page]||page;
+    document.getElementById('subBack').onclick=(page==='modul'&&modLv>0)?modBack:goHome;
+  }
+  document.querySelectorAll('.bb').forEach(function(b){b.classList.remove('act')});
+  if(page==='home')document.querySelectorAll('.bb')[0].classList.add('act');
+  if(page==='modul')document.querySelectorAll('.bb')[1].classList.add('act');
+  if(page==='absen')document.querySelectorAll('.bb')[2].classList.add('act');
+  if(page==='profil')document.querySelectorAll('.bb')[3].classList.add('act');
+  if(page==='home')renderHome();
+  else if(page==='modul'){modLv=0;modKls=null;modMap=null;renderModul()}
+  else if(page==='absen')renderAbsen();
+  else if(page==='myweb')renderMyWeb();
+  else if(page==='profil')renderProfil();
+  else if(page==='aktivitas')renderAktivitas();
+  else if(page==='admin'){renderAdminTables();fillSettingsForm()}
+  else if(page==='to')renderStudentTO();
+  else if(page==='jadwal')loadJadwalCabangSelect();
+  history.pushState({page:page},'');
+}
+function goHome(){navigate('home')}
+window.addEventListener('popstate',function(){if(document.getElementById('app-container').style.display!=='none')goHome()});
+
+/* === HOME === */
+function renderHome(){
+  document.getElementById('greetTxt').textContent=greetStr();
+  document.getElementById('greetNm').textContent=currentUser.name;
+  updateClock();
+  document.getElementById('dailyImage').src='https://image.pollinations.ai/prompt/Tampilan%20gambar%20semangat%20belajar%20di%20kelas%20yang%20berubah%20setiap%20masuk%20aplikasi%2C%20dengan%20gaya%203D%20semi%20realistis?width=800&height=400&seed='+dailySeed()+'&nologo=true';
+  var cabangs=[];appData.jadwal.forEach(function(j){if(j.cabang&&cabangs.indexOf(j.cabang)===-1)cabangs.push(j.cabang)});
+  var todayHari=dayName(new Date());
+  var kbmToday=appData.jadwal.filter(function(j){return j.hari===todayHari});
+  var kelasSet={};appData.jadwal.forEach(function(j){var k=j.cabang||'-';kelasSet[k]=true});
+  document.getElementById('stKbm').textContent=kbmToday.length;
+  document.getElementById('stKelas').textContent=cabangs.length||0;
+  document.getElementById('stKelasS').textContent=cabangs.join(', ')||'-';
+  document.getElementById('stSiswa').textContent=Object.keys(kelasSet).length?Object.keys(kelasSet).length*28:'-';
+  document.getElementById('stSiswaS').textContent='estimasi dari data jadwal';
+  if(kbmToday.length>0){
+    document.getElementById('kbmList').innerHTML=kbmToday.map(function(j){return '<div class="kbm-i"><span class="kbm-b">'+(j.cabang||'-')+'</span><span class="kbm-m">'+j.pelajaran+(j.guru?' ('+j.guru+')':'')+'</span><span class="kbm-t">'+j.jam+'</span></div>'}).join('');
+  }else{document.getElementById('kbmList').innerHTML='<div class="empty" style="padding:6px"><p>Tidak ada KBM hari ini</p></div>'}
+}
+
+/* === MOTIVASI === */
+function loadMotivationAndImage(){
+  var apiKey=appData.settings.apiKey||ls('apiKey');
+  if(apiKey){
+    fetch("https://api.groq.com/openai/v1/chat/completions",{
+      method:"POST",
+      headers:{"Authorization":"Bearer "+apiKey,"Content-Type":"application/json"},
+      body:JSON.stringify({model:"qwen-3-32b",messages:[
+        {role:"system",content:"Berikan satu kata motivasi belajar, singkat, penuh semangat. Boleh dari quote tokoh terkenal atau kutipan hadist. Tidak perlu penjelasan panjang."},
+        {role:"user",content:"Beri semangat belajar hari ini"}
+      ],temperature:0.8})
+    }).then(function(r){return r.json()}).then(function(d){
+      if(d.choices)document.getElementById('quoteCard').textContent=d.choices[0].message.content;
+    }).catch(function(){document.getElementById('quoteCard').textContent='"Teruslah berusaha, hasil indah menantimu."'});
+  }else{document.getElementById('quoteCard').textContent='"Teruslah berusaha, hasil indah menantimu."'}
+}
+
+/* === MODUL DRILL-DOWN === */
+function renderModul(){
+  var bc=document.getElementById('modBc'),ct=document.getElementById('modCt');
+  var tt=document.getElementById('subTitle'),bg=document.getElementById('subBadge');
+  bg.style.display='inline';
+  if(modLv===0){
+    tt.textContent='Modul Pelajaran';
+    var kelasList=[];appData.modul.forEach(function(m){if(m.kelas&&kelasList.indexOf(m.kelas)===-1)kelasList.push(m.kelas)});
+    bg.textContent=kelasList.length+' Kelas';
+    bc.innerHTML='<span class="act">Pilih Kelas</span>';
+    if(!kelasList.length){ct.innerHTML='<div class="empty"><i class="fas fa-book-open"></i><p>Belum ada modul</p></div>';bg.style.display='none';return}
+    ct.innerHTML=kelasList.map(function(k){return '<div class="lc" onclick="modSelKls(\''+esc(k)+'\')"><div class="lci"><div class="lc-ic" style="background:linear-gradient(135deg,#12B5C1,#0E9AA0)"><i class="fas fa-chalkboard"></i></div><div class="lc-nfo"><h4>Kelas '+k+'</h4><p>Pilih mata pelajaran</p></div><i class="fas fa-chevron-right lc-arr"></i></div></div>'}).join('');
+  }else if(modLv===1){
+    tt.textContent='Kelas '+modKls;
+    var mapelList=[];appData.modul.filter(function(m){return m.kelas===modKls}).forEach(function(m){if(m.mapel&&mapelList.indexOf(m.mapel)===-1)mapelList.push(m.mapel)});
+    bg.textContent=mapelList.length+' Mapel';
+    bc.innerHTML='<span onclick="modReset()">Pilih Kelas</span><i class="fas fa-chevron-right"></i><span class="act">'+modKls+'</span>';
+    var colors={'Matematika':'#12B5C1','B. Indonesia':'#FF6B6B','B. Inggris':'#F0A500','IPA':'#00B894','IPS':'#E17055','PAI':'#00CEC9','BK':'#F78FB3'};
+    ct.innerHTML=mapelList.map(function(mp){var c=colors[mp]||'#4A90D9';return '<div class="lc" onclick="modSelMap(\''+esc(mp)+'\')"><div class="lci"><div class="lc-ic" style="background:linear-gradient(135deg,'+c+','+c+'cc)"><i class="fas fa-book"></i></div><div class="lc-nfo"><h4>'+mp+'</h4><p>Lihat daftar modul</p></div><i class="fas fa-chevron-right lc-arr"></i></div></div>'}).join('');
+  }else if(modLv===2){
+    tt.textContent=modMap;
+    var items=appData.modul.filter(function(m){return m.kelas===modKls&&m.mapel===modMap});
+    bg.textContent=items.length+' Modul';
+    var colors2={'Matematika':'#12B5C1','B. Indonesia':'#FF6B6B','B. Inggris':'#F0A500','IPA':'#00B894','IPS':'#E17055','PAI':'#00CEC9','BK':'#F78FB3'};
+    var cl=colors2[modMap]||'#4A90D9';
+    bc.innerHTML='<span onclick="modReset()">Pilih Kelas</span><i class="fas fa-chevron-right"></i><span onclick="modGoLv(1)">'+modKls+'</span><i class="fas fa-chevron-right"></i><span class="act">'+modMap+'</span>';
+    ct.innerHTML=items.map(function(m,i){return '<div class="lc" onclick="window.open(\''+esc(m.link)+'\',\'_blank\')"><div class="lci"><div class="lc-ic" style="background:linear-gradient(135deg,'+cl+','+cl+'aa)"><span style="font-weight:800;font-size:14px">'+(i+1)+'</span></div><div class="lc-nfo"><h4>'+m.bab+'</h4><p>Kelas '+modKls+' &middot; '+modMap+'</p></div><i class="fas fa-external-link-alt lc-arr"></i></div></div>'}).join('');
+  }
+}
+function modSelKls(k){modKls=k;modLv=1;renderModul()}
+function modSelMap(m){modMap=m;modLv=2;renderModul()}
+function modGoLv(l){modLv=l;if(l<2)modMap=null;if(l<1)modKls=null;renderModul()}
+function modReset(){modGoLv(0)}
+function modBack(){if(modLv>0)modGoLv(modLv-1);else goHome()}
+
+/* === TRY OUT === */
+function renderStudentTO(){
+  var ct=document.getElementById('to-container');var html='';
+  appData.tryout.forEach(function(t){html+='<div class="lc" onclick="window.open(\''+esc(t.link)+'\',\'_blank\')"><div class="lci"><div class="lc-ic" style="background:linear-gradient(135deg,#FF6B6B,#ee5a5a)"><i class="fas fa-pen-fancy"></i></div><div class="lc-nfo"><h4>'+t.name+'</h4><p>Kelas: '+t.kelas+'</p></div><i class="fas fa-external-link-alt lc-arr"></i></div></div>'});
+  ct.innerHTML=html||'<div class="empty"><i class="fas fa-pen-fancy"></i><p>Belum ada Try Out</p></div>';
+}
+
+/* === ANALISA & PSIKOTES === */
+function openAnalisaLink(){if(appData.settings.linkAnalisa)window.open(appData.settings.linkAnalisa,'_blank');else showToast("Link analisa belum diatur admin")}
+function openPsikotesLink(){if(appData.settings.linkPsikotes)window.open(appData.settings.linkPsikotes,'_blank');else showToast("Link psikotes belum diatur admin")}
+
+/* === ABSEN QR === */
+function renderAbsen(){
+  var cabangs=[];appData.jadwal.forEach(function(j){if(j.cabang&&cabangs.indexOf(j.cabang)===-1)cabangs.push(j.cabang)});
+  if(!cabangs.length)cabangs.push('Cabang Utama');
+  absCab=cabangs[0];
+  document.getElementById('absCabTabs').innerHTML=cabangs.map(function(c,i){return '<button class="tbtn'+(i===0?' act':'')+'" onclick="switchAbsCab(\''+esc(c)+'\',this)">'+c+'</button>'}).join('');
+  document.getElementById('absen-cabang').value=absCab;
+}
+function switchAbsCab(c,btn){
+  absCab=c;document.getElementById('absen-cabang').value=c;
+  document.querySelectorAll('#absCabTabs .tbtn').forEach(function(b){b.classList.remove('act')});btn.classList.add('act');
+}
+function generateAndSave(){
+  var nama=document.getElementById('absen-nama').value,kelas=document.getElementById('absen-kelas').value,cabang=document.getElementById('absen-cabang').value,nis=document.getElementById('absen-nis').value;
+  if(!nama||!nis)return showToast("Nama & NIS wajib");
+  document.getElementById('qrcode').innerHTML="";
+  new QRCode(document.getElementById('qrcode'),{text:"ABSEN:"+nis+"-"+nama,width:150,height:150});
+  postData('saveAbsen',{nama:nama,kelas:kelas,cabang:cabang,nis:nis}).then(function(){showToast("Absen tersimpan")}).catch(function(){showToast("Gagal simpan (offline)")});
+  logAkt('Absen QR: '+nama+' ('+kelas+')','#00B894');
+}
+
+/* === CHAT BK === */
+function initChat(){document.getElementById('chat-messages').innerHTML='<div class="msg bot">Halo, ada yang bisa kakak bantu?</div>'}
+async function sendMessage(){
+  var input=document.getElementById('chat-input');var msg=input.value.trim();if(!msg)return;
+  addMessage(msg,'user');input.value='';
+  var apiKey=appData.settings.apiKey||ls('apiKey');
+  if(!apiKey){addMessage("API key belum disetting admin",'bot');return}
+  try{var res=await fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Authorization":"Bearer "+apiKey,"Content-Type":"application/json"},body:JSON.stringify({model:"qwen-3-32b",messages:[{role:"system",content:"Kamu konselor ramah untuk siswa bimbel AlphaBest."},{role:"user",content:msg}]})});
+    var data=await res.json();addMessage(data.choices[0].message.content,'bot');
+  }catch(e){addMessage("Error koneksi",'bot')}
+}
+function addMessage(text,type){var d=document.createElement('div');d.className='msg '+type;d.innerText=text;document.getElementById('chat-messages').appendChild(d);document.getElementById('chat-messages').scrollTop=99999}
+
+/* === KAMUS === */
+async function translateText(){
+  var text=document.getElementById('translate-text').value;var lang=document.getElementById('translate-lang').value;if(!text)return;
+  var url='https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl='+lang+'&dt=t&q='+encodeURIComponent(text);
+  var res=await fetch(url);var data=await res.json();document.getElementById('translate-result').value=data[0][0][0];
+}
+
+/* === KALKULATOR === */
+function calcAppend(v){document.getElementById('calc-display').value+=v}
+function calcResult(){try{document.getElementById('calc-display').value=eval(document.getElementById('calc-display').value)}catch(e){document.getElementById('calc-display').value="Error"}}
+function clearCalc(){document.getElementById('calc-display').value=''}
+
+/* === JADWAL & ALARM === */
+function loadJadwalCabangSelect(){
+  var cabangs=[];appData.jadwal.forEach(function(j){if(j.cabang&&cabangs.indexOf(j.cabang)===-1)cabangs.push(j.cabang)});
+  var sel=document.getElementById('filter-cabang');sel.innerHTML=cabangs.map(function(c){return '<option value="'+c+'">'+c+'</option>'}).join('');
+  if(cabangs.length)loadJadwal();
+}
+function loadJadwal(){
+  var cabang=document.getElementById('filter-cabang').value;
+  var filtered=appData.jadwal.filter(function(j){return j.cabang===cabang});
+  var ct=document.getElementById('jadwal-list');
+  if(!filtered.length){ct.innerHTML='<div class="empty"><i class="fas fa-calendar-alt"></i><p>Tidak ada jadwal untuk cabang ini</p></div>';return}
+  ct.innerHTML=filtered.map(function(j){return '<div class="alm-item"><b>'+j.hari+' | '+j.jam+'</b><br>'+j.pelajaran+' - '+(j.guru||'')+' ('+(j.ruang||'')+')<br><button class="alm-btn" onclick="setAlarm(\''+esc(j.jam)+'\',\''+esc(j.pelajaran)+'\')">⏰ Set Alarm</button></div>'}).join('');
+}
+function setAlarm(jam,pelajaran){var now=new Date();var parts=jam.split(':');var at=new Date();at.setHours(parseInt(parts[0]),parseInt(parts[1]),0);if(at<=now)at.setDate(at.getDate()+1);setTimeout(function(){alert("⏰ Waktunya: "+pelajaran)},at-now);showToast("Alarm: "+pelajaran+" pukul "+jam)}
+
+/* === MY WEB === */
+function renderMyWeb(){
+  var links=appData.webLinks||[];var ct=document.getElementById('mywebCt');
+  if(!links.length){ct.innerHTML='<div class="empty"><i class="fas fa-globe"></i><p>Belum ada link web.<br>Atur di Admin Dashboard.</p></div>';return}
+  ct.innerHTML=links.map(function(l){return '<a class="wlc" href="'+esc(l.url)+'" target="_blank" rel="noopener"><div class="wlc-i"><i class="fas fa-external-link-alt"></i></div><div class="wlc-n"><h4>'+l.nama+'</h4><p>'+l.url+'</p></div><i class="fas fa-chevron-right" style="color:var(--txm)"></i></a>'}).join('');
+}
+
+/* === PROFIL (LocalStorage) === */
+var profEdit=false;
+function renderProfil(){
+  profEdit=false;var p=ls('profil')||{nama:'',nip:'',jabatan:'',email:'',telepon:'',alamat:'',foto:''};
+  document.getElementById('profilCt').innerHTML=
+    '<div class="prof-h"><div class="prof-av">'+(p.foto?'<img src="'+p.foto+'" alt="">':'<i class="fas fa-user"></i>')+'</div>'+
+    '<div class="prof-nm">'+(p.nama||currentUser.name)+'</div><div class="prof-rl">'+(p.jabatan||currentUser.role)+'</div>'+
+    '<button class="btn btn-t btn-sm" style="margin-top:10px" onclick="editProf()"><i class="fas fa-pen"></i> Edit Profil</button></div>'+
+    '<div class="pf"><label>NIP / NIS</label><p>'+(p.nip||'-')+'</p></div>'+
+    '<div class="pf"><label>Email</label><p>'+(p.email||'-')+'</p></div>'+
+    '<div class="pf"><label>Telepon</label><p>'+(p.telepon||'-')+'</p></div>'+
+    '<div class="pf"><label>Alamat</label><p>'+(p.alamat||'-')+'</p></div>';
+}
+function editProf(){
+  profEdit=true;var p=ls('profil')||{};
+  document.getElementById('profilCt').innerHTML=
+    '<div style="text-align:center;margin-bottom:14px"><div class="prof-av foto-up" style="margin:0 auto;position:relative">'+
+    (p.foto?'<img src="'+p.foto+'" alt="" id="fpImg">':'<i class="fas fa-camera" id="fpImg">')+
+    '<input type="file" accept="image/*" onchange="prevFoto(event)"></div><p style="font-size:10px;color:var(--txm);margin-top:6px">Ketuk untuk ganti foto</p></div>'+
+    '<div class="fg"><label>Nama</label><input id="pNm" value="'+esc(p.nama||currentUser.name)+'"></div>'+
+    '<div class="fg"><label>NIP / NIS</label><input id="pNip" value="'+esc(p.nip)+'"></div>'+
+    '<div class="fg"><label>Jabatan</label><input id="pJab" value="'+esc(p.jabatan)+'"></div>'+
+    '<div class="fg"><label>Email</label><input id="pEm" value="'+esc(p.email)+'"></div>'+
+    '<div class="fg"><label>Telepon</label><input id="pTel" value="'+esc(p.telepon)+'"></div>'+
+    '<div class="fg"><label>Alamat</label><textarea id="pAlm">'+(p.alamat||'')+'</textarea></div>'+
+    '<div style="display:flex;gap:8px;margin-top:4px"><button class="btn btn-t" style="flex:1" onclick="saveProf()"><i class="fas fa-save"></i> Simpan</button>'+
+    '<button class="btn btn-r" style="width:auto;padding:11px 16px" onclick="renderProfil()"><i class="fas fa-times"></i></button></div>';
+}
+function prevFoto(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(ev){var el=document.getElementById('fpImg');if(el.tagName==='I'){var img=document.createElement('img');img.id='fpImg';img.src=ev.target.result;el.parentNode.replaceChild(img,el)}else{el.src=ev.target.result}};r.readAsDataURL(f)}
+function saveProf(){var el=document.getElementById('fpImg');var foto=el&&el.tagName==='IMG'?el.src:'';ls('profil',{nama:document.getElementById('pNm').value.trim(),nip:document.getElementById('pNip').value.trim(),jabatan:document.getElementById('pJab').value.trim(),email:document.getElementById('pEm').value.trim(),telepon:document.getElementById('pTel').value.trim(),alamat:document.getElementById('pAlm').value.trim(),foto:foto});showToast('Profil tersimpan!');renderProfil()}
+
+/* === AKTIVITAS === */
+function logAkt(aksi,color){var a=ls('akt_log')||[];a.unshift({aksi:aksi,waktu:'Baru saja',color:color||'#12B5C1'});if(a.length>30)a=a.slice(0,30);ls('akt_log',a)}
+function renderAktivitas(){var a=ls('akt_log')||[];var ct=document.getElementById('aktCt');if(!a.length){ct.innerHTML='<div class="empty"><i class="fas fa-history"></i><p>Belum ada aktivitas</p></div>';return}ct.innerHTML=a.map(function(x){return '<div class="ak-i"><div class="ak-d" style="background:'+x.color+'"></div><div class="ak-n"><h4>'+x.aksi+'</h4><p>'+x.waktu+'</p></div></div>'}).join('')}
+
+/* === BOTTOM BAR & WA === */
+function togBB(){bbVis=!bbVis;document.getElementById('bBar').classList.toggle('hid',!bbVis);document.querySelector('#bbTogB i').className=bbVis?'fas fa-chevron-down':'fas fa-chevron-up'}
+function openWA(){
+  var num=appData.settings.waAdmin||'';
+  document.getElementById('waDisp').textContent=num||'Belum diatur';
+  var cb=document.getElementById('waChat');
+  if(num){cb.style.display='inline-flex';cb.href='https://wa.me/'+num}else{cb.style.display='none'}
+  document.getElementById('waMov').classList.add('show');
+}
+function closeWA(){document.getElementById('waMov').classList.remove('show')}
+document.getElementById('waMov').addEventListener('click',function(e){if(e.target===this)closeWA()});
+
+/* === ADMIN === */
+function fillSettingsForm(){
+  document.getElementById('admin-apikey').value=appData.settings.apiKey||'';
+  document.getElementById('adm-link-analisa').value=appData.settings.linkAnalisa||'';
+  document.getElementById('adm-link-psikotes').value=appData.settings.linkPsikotes||'';
+  document.getElementById('adm-wa-num').value=appData.settings.waAdmin||'';
+  document.getElementById('adm-api-url').value=getApiUrl()||'';
+}
+async function saveApiUrl(){
+  var url=document.getElementById('adm-api-url').value.trim();
+  localStorage.setItem('ab_api_url',url);
+  showToast('URL tersimpan! Memuat ulang data...');
+  await loadDataFromBackend();
+}
+async function saveSettings(){
+  var apiKey=document.getElementById('admin-apikey').value;
+  var linkAnalisa=document.getElementById('adm-link-analisa').value;
+  var linkPsikotes=document.getElementById('adm-link-psikotes').value;
+  var waAdmin=document.getElementById('adm-wa-num').value;
+  await postData('updateSettings',{apiKey:apiKey,linkAnalisa:linkAnalisa,linkPsikotes:linkPsikotes,waAdmin:waAdmin});
+  appData.settings={apiKey:apiKey,linkAnalisa:linkAnalisa,linkPsikotes:linkPsikotes,waAdmin:waAdmin};
+  showToast("Settings tersimpan");
+}
+function renderAdminTables(){
+  document.getElementById('table-modul').innerHTML=appData.modul.map(function(m){return '<div class="adm-item"><div><b>'+m.mapel+'</b> - '+m.bab+' <span style="font-size:10px;color:var(--txm)">('+m.kelas+')</span></div><button onclick="deleteModul(\''+esc(m.id)+'\')"><i class="fas fa-trash"></i></button></div>'}).join('')||'<p style="font-size:12px;color:var(--txm)">Belum ada modul</p>';
+  document.getElementById('table-to').innerHTML=appData.tryout.map(function(t){return '<div class="adm-item"><div><b>'+t.name+'</b> <span style="font-size:10px;color:var(--txm)">('+t.kelas+')</span></div><button onclick="deleteTO(\''+esc(t.id)+'\')"><i class="fas fa-trash"></i></button></div>'}).join('')||'<p style="font-size:12px;color:var(--txm)">Belum ada TO</p>';
+  document.getElementById('table-jadwal').innerHTML=appData.jadwal.map(function(j){return '<div class="adm-item"><div><b>'+j.cabang+'</b> | '+j.hari+' | '+j.jam+' | '+j.pelajaran+'</div><button onclick="deleteJadwal(\''+esc(j.id)+'\')"><i class="fas fa-trash"></i></button></div>'}).join('')||'<p style="font-size:12px;color:var(--txm)">Belum ada jadwal</p>';
+  document.getElementById('table-weblinks').innerHTML=(appData.webLinks||[]).map(function(l){return '<div class="adm-item"><div><b>'+l.nama+'</b></div><button onclick="deleteWebLink(\''+esc(l.nama)+'\')"><i class="fas fa-trash"></i></button></div>'}).join('')||'<p style="font-size:12px;color:var(--txm)">Belum ada link</p>';
+}
+function showModulForm(){var kelas=prompt("Kelas");var mapel=prompt("Mapel");var bab=prompt("Bab");var link=prompt("Link");if(kelas&&mapel&&bab)postData('addModul',{kelas:kelas,mapel:mapel,bab:bab,link:link}).then(function(){loadDataFromBackend()})}
+function showTOForm(){var name=prompt("Nama TO");var kelas=prompt("Kelas");var link=prompt("Link");if(name)postData('addTO',{name:name,kelas:kelas,link:link}).then(function(){loadDataFromBackend()})}
+function showJadwalForm(){var cabang=prompt("Cabang");var hari=prompt("Hari");var jam=prompt("Jam (HH:MM)");var pelajaran=prompt("Pelajaran");var guru=prompt("Guru");var ruang=prompt("Ruang");if(cabang&&hari&&jam&&pelajaran)postData('addJadwal',{cabang:cabang,hari:hari,jam:jam,pelajaran:pelajaran,guru:guru,ruang:ruang}).then(function(){loadDataFromBackend()})}
+function showWebLinkForm(){var nama=prompt("Nama Web");var url=prompt("URL");if(nama&&url)postData('addWebLink',{nama:nama,url:url}).then(function(){loadDataFromBackend()})}
+function deleteModul(id){if(confirm("Hapus modul?"))postData('deleteModul',{id:id}).then(function(){loadDataFromBackend()})}
+function deleteTO(id){if(confirm("Hapus TO?"))postData('deleteTO',{id:id}).then(function(){loadDataFromBackend()})}
+function deleteJadwal(id){if(confirm("Hapus jadwal?"))postData('deleteJadwal',{id:id}).then(function(){loadDataFromBackend()})}
+function deleteWebLink(nama){if(confirm("Hapus link?"))postData('deleteWebLink',{nama:nama}).then(function(){loadDataFromBackend()})}
+
+/* === RENDER ALL === */
+function renderAll(){renderStudentTO();renderAdminTables();if(currentUser.role==='admin')fillSettingsForm()}
+</script>
+</body>
+</html>
