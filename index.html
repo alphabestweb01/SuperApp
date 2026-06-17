@@ -583,11 +583,26 @@ function renderHome() {
 function loadMotivationAndImage() {
   let apiKey = appData.settings.apiKey || '';
   if (apiKey) {
-    fetch("https://api.groq.com/openai/v1/chat/completions", {
+    // 🔥 PAKAI GEMINI 2.5 FLASH API
+    fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + apiKey, {
       method: "POST",
-      headers: { "Authorization": "Bearer " + apiKey, "Content-Type": "application/json" },
-      body: JSON.stringify({ model: "qwen-3-32b", messages: [{ role: "system", content: "Berikan satu kata motivasi belajar, singkat, penuh semangat." }, { role: "user", content: "Beri semangat belajar hari ini" }], temperature: 0.8 })
-    }).then(r => r.json()).then(d => { if (d.choices) document.getElementById('quoteCard').textContent = d.choices[0].message.content; }).catch(() => { document.getElementById('quoteCard').textContent = '"Teruslah berusaha, hasil indah menantimu."'; });
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: "Berikan satu kalimat motivasi belajar, singkat, penuh semangat, maksimal 20 kata."
+          }]
+        }]
+      })
+    })
+    .then(r => r.json())
+    .then(d => {
+      let quote = d.candidates?.[0]?.content?.parts?.[0]?.text || '"Teruslah berusaha, hasil indah menantimu."';
+      document.getElementById('quoteCard').textContent = quote;
+    })
+    .catch(() => {
+      document.getElementById('quoteCard').textContent = '"Teruslah berusaha, hasil indah menantimu."';
+    });
   } else {
     document.getElementById('quoteCard').textContent = '"Teruslah berusaha, hasil indah menantimu."';
   }
@@ -671,19 +686,37 @@ async function sendMessage() {
   let input = document.getElementById('chat-input');
   let msg = input.value.trim();
   if (!msg) return;
+  
   addMessage(msg, 'user');
   input.value = '';
+  
   let apiKey = appData.settings.apiKey || '';
-  if (!apiKey) { addMessage("API key belum disetting admin", 'bot'); return; }
+  if (!apiKey) { 
+    addMessage("API key belum disetting admin", 'bot'); 
+    return; 
+  }
+  
   try {
-    let res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    // 🔥 PAKAI GEMINI 2.5 FLASH API
+    let res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + apiKey, {
       method: "POST",
-      headers: { "Authorization": "Bearer " + apiKey, "Content-Type": "application/json" },
-      body: JSON.stringify({ model: "qwen-3-32b", messages: [{ role: "system", content: "Kamu konselor ramah untuk siswa bimbel AlphaBest." }, { role: "user", content: msg }] })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: "Kamu adalah konselor ramah untuk siswa bimbel AlphaBest. Jawab pertanyaan ini dengan bijak dan penuh empati: " + msg
+          }]
+        }]
+      })
     });
+    
     let data = await res.json();
-    addMessage(data.choices[0].message.content, 'bot');
-  } catch(e) { addMessage("Error koneksi", 'bot'); }
+    let reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Maaf, saya tidak bisa menjawab saat ini.";
+    addMessage(reply, 'bot');
+  } catch(e) { 
+    console.error('Gemini error:', e);
+    addMessage("Error koneksi ke Gemini", 'bot'); 
+  }
 }
 function addMessage(text, type) { let d = document.createElement('div'); d.className = 'msg ' + type; d.innerText = text; document.getElementById('chat-messages').appendChild(d); document.getElementById('chat-messages').scrollTop = 99999; }
 
