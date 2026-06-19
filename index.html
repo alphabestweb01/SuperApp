@@ -357,12 +357,13 @@ body{background:var(--bg);color:var(--tx);height:100vh;overflow:hidden;display:f
 </div>
 
 <script>
-// ============ 🔥 KONFIGURASI - PAKAI WORKER 🔥 ============
-// Worker Cloudflare sebagai proxy ke Google Apps Script
-const APP_SCRIPT_URL = "https://kodesheet.alphabest-web.workers.dev";
+// ============================================================
+// 🔥 KONFIGURASI - APPS SCRIPT URL (HARDCODE)
+// ============================================================
+// GANTI DENGAN URL APPS SCRIPT KAMU!
+const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyMClHqzhRYJ4eTjIxwAzSMeWQQJAnzrwlbyw2cKpVI9te6D0drDBbLDeSMu0Z4fQ/exec';
 
-// Jangan ubah kode di bawah ini
-// ================================================================
+// ============================================================
 
 function getApiUrl() {
   return APP_SCRIPT_URL;
@@ -457,12 +458,13 @@ async function loadDataFromBackend() {
     let data = await res.json();
     
     if (data && data.status === 'ok') {
-      appData = data.data || data;
-      if (!appData.settings) appData.settings = { apiKey: '', linkAnalisa: '', linkPsikotes: '', waAdmin: '' };
-      if (!appData.modul) appData.modul = [];
-      if (!appData.tryout) appData.tryout = [];
-      if (!appData.jadwal) appData.jadwal = [];
-      if (!appData.webLinks) appData.webLinks = [];
+      // Ambil data dari nested object
+      let sourceData = data.data || data;
+      appData.modul = sourceData.modul || [];
+      appData.tryout = sourceData.tryout || [];
+      appData.jadwal = sourceData.jadwal || [];
+      appData.webLinks = sourceData.webLinks || [];
+      appData.settings = sourceData.settings || { apiKey: '', linkAnalisa: '', linkPsikotes: '', waAdmin: '' };
       
       localStorage.setItem('ab_cached_data', JSON.stringify(appData));
       updateSyncStatus('synced');
@@ -1186,7 +1188,7 @@ setInterval(() => {
 
 // ============ INITIAL LOAD ============
 console.log('✅ AlphaBest App loaded!');
-console.log('🌐 Worker URL:', APP_SCRIPT_URL);
+console.log('🌐 Apps Script URL:', APP_SCRIPT_URL);
 console.log('👤 Current user:', currentUser);
 console.log('📦 App data:', appData);
 
