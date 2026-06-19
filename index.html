@@ -357,8 +357,8 @@ body{background:var(--bg);color:var(--tx);height:100vh;overflow:hidden;display:f
 </div>
 
 <script>
-// ============ 🔥 KONFIGURASI - GANTI URL DI SINI 🔥 ============
-// URL Google Apps Script - Ganti dengan URL kamu!
+// ============ 🔥 KONFIGURASI - PAKAI WORKER 🔥 ============
+// Worker Cloudflare sebagai proxy ke Google Apps Script
 const APP_SCRIPT_URL = "https://kodesheet.alphabest-web.workers.dev";
 
 // Jangan ubah kode di bawah ini
@@ -380,7 +380,6 @@ let appData = {
 let currentUser = { role: 'siswa', name: 'Pengguna' };
 let modLv = 0, modKls = null, modMap = null;
 let absCab = '', bbVis = true;
-let isSyncing = false;
 
 // ============ UTILITAS ============
 function showToast(msg, type = 'info') {
@@ -428,7 +427,7 @@ function updateClock() {
 setInterval(updateClock, 1000);
 
 // ============ SYNC STATUS ============
-function updateSyncStatus(status, message = '') {
+function updateSyncStatus(status) {
   let el = document.getElementById('syncStatus');
   if (!el) return;
   if (status === 'synced') {
@@ -1186,10 +1185,10 @@ setInterval(() => {
 }, 30000);
 
 // ============ INITIAL LOAD ============
-console.log('AlphaBest App loaded!');
-console.log('URL:', APP_SCRIPT_URL);
-console.log('Current user:', currentUser);
-console.log('App data:', appData);
+console.log('✅ AlphaBest App loaded!');
+console.log('🌐 Worker URL:', APP_SCRIPT_URL);
+console.log('👤 Current user:', currentUser);
+console.log('📦 App data:', appData);
 
 logAkt('Login sebagai ' + currentUser.name, '#12B5C1');
 </script>
