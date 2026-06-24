@@ -169,6 +169,13 @@ body{background:var(--bg);color:var(--tx);height:100vh;overflow:hidden;display:f
 .sync-status i{font-size:10px}
 .sync-status.synced i{color:#00B894}
 .sync-status.syncing i{animation:spin 1s linear infinite}
+.report-table{width:100%;border-collapse:collapse;font-size:12px}
+.report-table th{background:var(--toska-l);padding:8px 6px;text-align:left;border-bottom:2px solid var(--toska);position:sticky;top:0;z-index:2}
+.report-table td{padding:6px;border-bottom:1px solid var(--bdr)}
+.report-table tr:hover{background:var(--toska-ll)}
+.report-table .kbm-b{background:var(--toska-l);color:var(--toska-d);padding:2px 8px;border-radius:7px;font-weight:600;font-size:10px;white-space:nowrap}
+.report-filter{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:480px){.report-filter{grid-template-columns:1fr}}
 @media(min-width:431px){body{background:#c5d8da}.app{box-shadow:0 0 40px rgba(0,0,0,.15);margin:8px 0;border-radius:20px;height:calc(100vh - 16px);overflow:hidden}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -214,6 +221,7 @@ body{background:var(--bg);color:var(--tx);height:100vh;overflow:hidden;display:f
 
 <div class="main-ct">
 
+<!-- ============ HOME ============ -->
 <section id="page-home" class="pg act">
   <div class="dimg"><img id="dailyImage" src="" alt="Inspirasi"><div class="dimg-ov"></div></div>
   <div class="qt" id="quoteCard">Memuat motivasi...</div>
@@ -222,9 +230,10 @@ body{background:var(--bg);color:var(--tx);height:100vh;overflow:hidden;display:f
     <div class="st sc2"><div class="st-n" id="stKelas">0</div><div class="st-l">Jumlah Kelas</div><div class="st-s" id="stKelasS">-</div></div>
     <div class="st sc3"><div class="st-n" id="stKbm">0</div><div class="st-l">KBM Hari Ini</div><div class="st-s">Aktif</div></div>
   </div>
-  <div style="display:flex;gap:8px;margin:4px 0 8px">
+  <div style="display:flex;gap:8px;margin:4px 0 8px;flex-wrap:wrap">
     <button class="btn btn-sm btn-sync" onclick="manualSync()"><i class="fas fa-sync"></i> Refresh</button>
     <button class="btn btn-sm btn-t" onclick="navigate('admin')" style="background:linear-gradient(135deg,#6C5CE7,#A29BFE)"><i class="fas fa-cog"></i> Admin</button>
+    <button class="btn btn-sm" style="background:linear-gradient(135deg,#00B894,#00A381);color:#fff" onclick="navigate('report')"><i class="fas fa-file-alt"></i> Report</button>
   </div>
   <div class="cd"><div style="font-size:12px;font-weight:700;color:var(--toska-d);margin-bottom:8px"><i class="fas fa-chalkboard-teacher"></i> KBM Aktif Hari Ini</div><div id="kbmList"><div class="empty" style="padding:6px"><p>-</p></div></div></div>
   <div class="sec-t">Menu Utama</div>
@@ -241,13 +250,23 @@ body{background:var(--bg);color:var(--tx);height:100vh;overflow:hidden;display:f
     <div class="mi" onclick="navigate('myweb')"><div class="mic" style="background:linear-gradient(135deg,#A29BFE,#6C5CE7)"><i class="fas fa-globe"></i></div><div class="mil">My Web</div></div>
     <div class="mi" onclick="navigate('profil')"><div class="mic" style="background:linear-gradient(135deg,#2ECC71,#27AE60)"><i class="fas fa-user-circle"></i></div><div class="mil">Profil</div></div>
     <div class="mi" onclick="navigate('aktivitas')"><div class="mic" style="background:linear-gradient(135deg,#FD79A8,#E84393)"><i class="fas fa-history"></i></div><div class="mil">Aktivitas</div></div>
+    <div class="mi" onclick="navigate('report')"><div class="mic" style="background:linear-gradient(135deg,#FDCB6E,#E17055)"><i class="fas fa-file-alt"></i></div><div class="mil">Report</div></div>
   </div>
 </section>
 
+<!-- ============ MODUL ============ -->
 <section id="page-modul" class="pg"><div class="bc" id="modBc"></div><div id="modCt"></div></section>
+
+<!-- ============ TRY OUT ============ -->
 <section id="page-to" class="pg"><h2 style="font-size:15px;font-weight:800;color:var(--toska-d);margin-bottom:12px">Try Out Online</h2><div id="to-container"></div></section>
+
+<!-- ============ ANALISA ============ -->
 <section id="page-analisa" class="pg"><div class="cd" style="text-align:center"><h3 style="color:var(--toska-d)"><i class="fas fa-chart-bar"></i> Analisa SNBP & SNBT</h3><p style="font-size:12px;color:var(--txm);margin:8px 0">Analisis kemampuan akademikmu</p><button class="btn btn-t" onclick="openAnalisaLink()"><i class="fas fa-external-link-alt"></i> Mulai Analisa</button></div></section>
+
+<!-- ============ PSIKOTES ============ -->
 <section id="page-psikotes" class="pg"><div class="cd" style="text-align:center"><h3 style="color:var(--toska-d)"><i class="fas fa-brain"></i> Psikotes Minat & Bakat</h3><p style="font-size:12px;color:var(--txm);margin:8px 0">Kenali potensi dirimu</p><button class="btn btn-a" onclick="openPsikotesLink()"><i class="fas fa-external-link-alt"></i> Mulai Psikotes</button></div></section>
+
+<!-- ============ ABSENSI ============ -->
 <section id="page-absen" class="pg">
   <div class="tabs" id="absCabTabs"></div>
   <div class="cd" style="text-align:center">
@@ -255,13 +274,18 @@ body{background:var(--bg);color:var(--tx);height:100vh;overflow:hidden;display:f
     <div style="text-align:left;margin-top:12px">
       <div class="fg"><input type="text" id="absen-nama" placeholder="Nama lengkap"></div>
       <div class="fg"><input type="text" id="absen-kelas" placeholder="Kelas"></div>
-      <div class="fg"><input type="text" id="absen-cabang" placeholder="Cabang"></div>
+      <div class="fg">
+        <label>Cabang</label>
+        <select id="absen-cabang"><option value="">Pilih Cabang</option></select>
+      </div>
       <div class="fg"><input type="text" id="absen-nis" placeholder="NIS"></div>
     </div>
     <button class="btn btn-t btn-full" onclick="generateAndSave()"><i class="fas fa-qrcode"></i> Generate QR & Absen</button>
     <div id="qrcode-container" style="margin-top:16px"><div id="qrcode"></div></div>
   </div>
 </section>
+
+<!-- ============ BK / KONSELING ============ -->
 <section id="page-bk" class="pg">
   <div class="cd" style="margin-bottom:0"><h3 style="color:var(--toska-d);font-size:14px"><i class="fas fa-comments"></i> Konseling Akademik & Mental</h3></div>
   <div class="chat-box" style="margin-top:8px">
@@ -272,6 +296,8 @@ body{background:var(--bg);color:var(--tx);height:100vh;overflow:hidden;display:f
     </div>
   </div>
 </section>
+
+<!-- ============ KAMUS ============ -->
 <section id="page-kamus" class="pg">
   <div class="cd">
     <h3 style="color:var(--toska-d);font-size:14px"><i class="fas fa-globe"></i> Penerjemah</h3>
@@ -281,6 +307,8 @@ body{background:var(--bg);color:var(--tx);height:100vh;overflow:hidden;display:f
     <div class="fg" style="margin-top:12px"><label>Hasil</label><textarea id="translate-result" rows="3" readonly></textarea></div>
   </div>
 </section>
+
+<!-- ============ KALKULATOR ============ -->
 <section id="page-kalkulator" class="pg">
   <div class="cd">
     <h3 style="color:var(--toska-d);font-size:14px;margin-bottom:10px"><i class="fas fa-calculator"></i> Kalkulator</h3>
@@ -299,6 +327,8 @@ body{background:var(--bg);color:var(--tx);height:100vh;overflow:hidden;display:f
     </div>
   </div>
 </section>
+
+<!-- ============ JADWAL ============ -->
 <section id="page-jadwal" class="pg">
   <h2 style="font-size:15px;font-weight:800;color:var(--toska-d);margin-bottom:10px"><i class="fas fa-calendar-alt"></i> Jadwal & Alarm</h2>
   <div class="cd">
@@ -306,9 +336,59 @@ body{background:var(--bg);color:var(--tx);height:100vh;overflow:hidden;display:f
     <div id="jadwal-list"></div>
   </div>
 </section>
+
+<!-- ============ MY WEB ============ -->
 <section id="page-myweb" class="pg"><h2 style="font-size:15px;font-weight:800;color:var(--toska-d);margin-bottom:10px"><i class="fas fa-globe"></i> My Web</h2><div id="mywebCt"></div></section>
+
+<!-- ============ PROFIL ============ -->
 <section id="page-profil" class="pg"><div id="profilCt"></div></section>
+
+<!-- ============ AKTIVITAS ============ -->
 <section id="page-aktivitas" class="pg"><h2 style="font-size:15px;font-weight:800;color:var(--toska-d);margin-bottom:10px"><i class="fas fa-history"></i> Ringkasan Aktivitas</h2><div id="aktCt"></div></section>
+
+<!-- ============ REPORT ============ -->
+<section id="page-report" class="pg">
+  <h2 style="font-size:15px;font-weight:800;color:var(--toska-d);margin-bottom:10px">
+    <i class="fas fa-file-alt"></i> Report Absensi
+  </h2>
+  
+  <div class="cd">
+    <div class="report-filter">
+      <div class="fg" style="margin-bottom:0">
+        <label>Cabang</label>
+        <select id="report-cabang" onchange="loadReport()">
+          <option value="">Semua</option>
+        </select>
+      </div>
+      <div class="fg" style="margin-bottom:0">
+        <label>Kelas</label>
+        <input type="text" id="report-kelas" placeholder="Filter kelas..." oninput="loadReport()">
+      </div>
+    </div>
+    <div class="fg" style="margin-top:10px;margin-bottom:0">
+      <label>Cari Nama Siswa</label>
+      <input type="text" id="report-nama" placeholder="Ketik nama..." oninput="loadReport()">
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+      <button class="btn btn-t btn-sm" onclick="printReport()">
+        <i class="fas fa-print"></i> Print PDF
+      </button>
+      <button class="btn btn-sm btn-sync" onclick="loadReport()">
+        <i class="fas fa-sync"></i> Refresh
+      </button>
+      <span id="report-count" style="margin-left:auto;font-size:11px;color:var(--txm);display:flex;align-items:center"></span>
+    </div>
+  </div>
+  
+  <div class="cd" id="report-container" style="overflow-x:auto">
+    <div style="text-align:center;padding:20px;color:var(--txm)">
+      <i class="fas fa-spinner fa-spin" style="font-size:24px"></i>
+      <p>Memuat data...</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ADMIN ============ -->
 <section id="page-admin" class="pg">
   <h2 style="font-size:15px;font-weight:800;color:var(--toska-d);margin-bottom:6px">Admin Dashboard</h2>
   <div class="cd"><div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--toska-d)"><span class="conn-dot conn-off" id="connDot"></span><span id="connTxt">Belum terhubung</span></div></div>
@@ -323,6 +403,10 @@ body{background:var(--bg);color:var(--tx);height:100vh;overflow:hidden;display:f
   <div class="adm-sec"><h3><i class="fas fa-pen-fancy" style="color:#FF6B6B"></i> Kelola Try Out</h3><button class="btn btn-t btn-sm" onclick="showTOForm()"><i class="fas fa-plus"></i> Tambah</button><div id="table-to" style="margin-top:8px"></div></div>
   <div class="adm-sec"><h3><i class="fas fa-calendar" style="color:#4A90D9"></i> Kelola Jadwal</h3><button class="btn btn-t btn-sm" onclick="showJadwalForm()"><i class="fas fa-plus"></i> Tambah</button><div id="table-jadwal" style="margin-top:8px"></div></div>
   <div class="adm-sec"><h3><i class="fas fa-globe" style="color:#A29BFE"></i> Menu Web Kami</h3><button class="btn btn-t btn-sm" onclick="showWebLinkForm()"><i class="fas fa-plus"></i> Tambah</button><div id="table-weblinks" style="margin-top:8px"></div></div>
+  <div class="adm-sec"><h3><i class="fas fa-file-alt" style="color:#FDCB6E"></i> Kelola Cabang</h3>
+    <p style="font-size:11px;color:var(--txm);margin-bottom:8px">Tambah cabang di spreadsheet sheet "Cabang"</p>
+    <button class="btn btn-sm btn-sync" onclick="loadCabangList()"><i class="fas fa-sync"></i> Refresh Cabang</button>
+  </div>
   <div style="margin:24px 0 16px"><button class="btn btn-r btn-full" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Keluar</button></div>
 </section>
 
@@ -333,7 +417,7 @@ body{background:var(--bg);color:var(--tx);height:100vh;overflow:hidden;display:f
   <button class="bb act" onclick="navigate('home')"><i class="fas fa-home"></i></button>
   <button class="bb" onclick="navigate('modul')"><i class="fas fa-book-open"></i></button>
   <button class="bb" onclick="navigate('absen')"><i class="fas fa-qrcode"></i></button>
-  <button class="bb" onclick="navigate('profil')"><i class="fas fa-user"></i></button>
+  <button class="bb" onclick="navigate('report')"><i class="fas fa-file-alt"></i></button>
   <button class="bb" onclick="openWA()" style="color:#25D366"><i class="fab fa-whatsapp"></i></button>
 </div>
 
@@ -361,7 +445,7 @@ body{background:var(--bg);color:var(--tx);height:100vh;overflow:hidden;display:f
 // 🔥 KONFIGURASI - APPS SCRIPT URL (HARDCODE)
 // ============================================================
 // GANTI DENGAN URL APPS SCRIPT KAMU!
-const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyuZiYblcU0nDRmDMB7iG_swTUUvgzX97ejnzKv7IfF4JBncbf4yTblpW9pW9UAmV9c/exec';
+const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyMClHqzhRYJ4eTjIxwAzSMeWQQJAnzrwlbyw2cKpVI9te6D0drDBbLDeSMu0Z4fQ/exec';
 
 // ============================================================
 
@@ -376,7 +460,8 @@ let appData = {
   tryout: [],
   jadwal: [],
   webLinks: [],
-  absensi: []
+  absensi: [],
+  cabang: []
 };
 let currentUser = { role: 'siswa', name: 'Pengguna' };
 let modLv = 0, modKls = null, modMap = null;
@@ -458,7 +543,6 @@ async function loadDataFromBackend() {
     let data = await res.json();
     
     if (data && data.status === 'ok') {
-      // Ambil data dari nested object
       let sourceData = data.data || data;
       appData.modul = sourceData.modul || [];
       appData.tryout = sourceData.tryout || [];
@@ -549,11 +633,213 @@ async function testConn() {
   showToast(document.getElementById('connTxt').textContent);
 }
 
+// ============ LOAD CABANG ============
+async function loadCabangList() {
+  try {
+    let res = await fetch(getApiUrl() + "?action=getCabang&t=" + Date.now());
+    let data = await res.json();
+    let cabangs = data.data || [];
+    appData.cabang = cabangs;
+    
+    // Update dropdown absen
+    let absenSelect = document.getElementById('absen-cabang');
+    if (absenSelect) {
+      absenSelect.innerHTML = '<option value="">Pilih Cabang</option>' + 
+        cabangs.map(c => '<option value="' + c + '">' + c + '</option>').join('');
+    }
+    
+    // Update dropdown report
+    let reportSelect = document.getElementById('report-cabang');
+    if (reportSelect) {
+      reportSelect.innerHTML = '<option value="">Semua</option>' + 
+        cabangs.map(c => '<option value="' + c + '">' + c + '</option>').join('');
+    }
+    
+    // Update tabs absen
+    renderAbsenTabs(cabangs);
+    
+    return cabangs;
+  } catch(e) {
+    console.error('Gagal load cabang:', e);
+    // Fallback: ambil dari data jadwal
+    let cabangs = [];
+    appData.jadwal.forEach(j => {
+      if (j.cabang && cabangs.indexOf(j.cabang) === -1) cabangs.push(j.cabang);
+    });
+    return cabangs;
+  }
+}
+
+function renderAbsenTabs(cabangs) {
+  if (!cabangs || !cabangs.length) {
+    cabangs = ['Cabang Utama'];
+  }
+  absCab = cabangs[0] || 'Cabang Utama';
+  let container = document.getElementById('absCabTabs');
+  if (container) {
+    container.innerHTML = cabangs.map((c, i) => 
+      '<button class="tbtn' + (i === 0 ? ' act' : '') + '" onclick="switchAbsCab(\'' + esc(c) + '\',this)">' + c + '</button>'
+    ).join('');
+  }
+  let cabangInput = document.getElementById('absen-cabang');
+  if (cabangInput) cabangInput.value = absCab;
+}
+
+function switchAbsCab(c, btn) {
+  absCab = c;
+  let cabangInput = document.getElementById('absen-cabang');
+  if (cabangInput) cabangInput.value = c;
+  document.querySelectorAll('#absCabTabs .tbtn').forEach(b => b.classList.remove('act'));
+  if (btn) btn.classList.add('act');
+}
+
+// ============ LOAD REPORT ============
+async function loadReport() {
+  let cabang = document.getElementById('report-cabang').value;
+  let kelas = document.getElementById('report-kelas').value;
+  let nama = document.getElementById('report-nama').value;
+  
+  let url = getApiUrl() + "?action=getAbsensi";
+  if (cabang) url += "&cabang=" + encodeURIComponent(cabang);
+  if (kelas) url += "&kelas=" + encodeURIComponent(kelas);
+  if (nama) url += "&nama=" + encodeURIComponent(nama);
+  url += "&t=" + Date.now();
+  
+  try {
+    let res = await fetch(url);
+    let data = await res.json();
+    let absensi = data.data || [];
+    
+    let container = document.getElementById('report-container');
+    let countEl = document.getElementById('report-count');
+    
+    if (!absensi.length) {
+      container.innerHTML = '<div class="empty"><i class="fas fa-file-alt"></i><p>Belum ada data absensi</p></div>';
+      if (countEl) countEl.textContent = '0 data';
+      return;
+    }
+    
+    let html = `
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Tanggal</th>
+            <th>Nama</th>
+            <th>Kelas</th>
+            <th>Cabang</th>
+            <th>NIS</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+    
+    absensi.forEach(function(item, i) {
+      let tgl = item.timestamp ? new Date(item.timestamp).toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' }) : '-';
+      html += `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${tgl}</td>
+          <td style="font-weight:600">${item.nama}</td>
+          <td>${item.kelas}</td>
+          <td><span class="kbm-b">${item.cabang}</span></td>
+          <td>${item.nis}</td>
+        </tr>
+      `;
+    });
+    
+    html += `
+        </tbody>
+        <tfoot>
+          <tr style="background:var(--toska-l);border-top:2px solid var(--toska)">
+            <td colspan="6" style="padding:8px;font-weight:600;text-align:center">
+              Total: ${absensi.length} siswa
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    `;
+    
+    container.innerHTML = html;
+    if (countEl) countEl.textContent = absensi.length + ' data';
+    
+  } catch(e) {
+    console.error('Error load report:', e);
+    document.getElementById('report-container').innerHTML = 
+      '<div class="empty"><i class="fas fa-exclamation-circle" style="color:#FF6B6B"></i><p>Gagal memuat data</p></div>';
+  }
+}
+
+// ============ PRINT PDF ============
+function printReport() {
+  let container = document.getElementById('report-container');
+  let title = document.createElement('div');
+  let now = new Date();
+  let dateStr = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  
+  let cabangFilter = document.getElementById('report-cabang').value;
+  let kelasFilter = document.getElementById('report-kelas').value;
+  let namaFilter = document.getElementById('report-nama').value;
+  
+  let filterText = '';
+  if (cabangFilter) filterText += 'Cabang: ' + cabangFilter + ' | ';
+  if (kelasFilter) filterText += 'Kelas: ' + kelasFilter + ' | ';
+  if (namaFilter) filterText += 'Nama: ' + namaFilter;
+  if (!filterText) filterText = 'Semua Data';
+  
+  let printContent = document.createElement('div');
+  printContent.innerHTML = container.innerHTML;
+  
+  let printWindow = window.open('', '_blank');
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>Laporan Absensi AlphaBest</title>
+        <style>
+          body { font-family: 'Segoe UI', Arial, sans-serif; padding: 20px; background: #fff; }
+          .header { text-align: center; padding: 20px; border-bottom: 3px solid #12B5C1; margin-bottom: 16px; }
+          .header h1 { color: #136F83; margin: 0; font-size: 22px; }
+          .header p { color: #5A7A80; font-size: 13px; margin: 4px 0; }
+          .filter-info { text-align: center; font-size: 12px; color: #5A7A80; margin-bottom: 12px; }
+          table { width: 100%; border-collapse: collapse; font-size: 11px; }
+          th { background: #E0F7FA; padding: 8px 6px; text-align: left; border-bottom: 2px solid #12B5C1; }
+          td { padding: 6px; border-bottom: 1px solid #D5E5E8; }
+          .kbm-b { background: #E0F7FA; padding: 2px 8px; border-radius: 7px; font-weight: 600; font-size: 10px; }
+          .footer { text-align: center; padding: 16px; font-size: 10px; color: #999; border-top: 1px solid #ddd; margin-top: 16px; }
+          .total { background: #E0F7FA; border-top: 2px solid #12B5C1; font-weight: 600; }
+          @media print { 
+            body { margin: 0; padding: 10px; } 
+            .no-print { display: none; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>📋 Laporan Absensi AlphaBest</h1>
+          <p>${dateStr}</p>
+          <p style="font-size:11px;color:#888">Filter: ${filterText}</p>
+        </div>
+        ${printContent.innerHTML}
+        <div class="footer">
+          Dicetak dari AlphaBest App - ${now.toLocaleString('id-ID')}
+        </div>
+        <script>
+          window.onload = function() { 
+            setTimeout(function() { window.print(); }, 500);
+          }
+        <\/script>
+      </body>
+    </html>
+  `);
+  printWindow.document.close();
+}
+
 // ============ MANUAL SYNC ============
 async function manualSync() {
   showToast('Menyinkronkan data...', 'info');
   let result = await loadDataFromBackend();
   if (result) {
+    await loadCabangList();
     renderAll();
     if (currentUser.role === 'siswa') renderHome();
     showToast('Data berhasil disinkronkan!', 'success');
@@ -574,10 +860,10 @@ window.onload = function() {
     document.getElementById('login-screen').style.display = 'flex';
   }, 1200);
   
-  setTimeout(() => {
-    loadDataFromBackend().then(() => {
-      renderAll();
-    });
+  setTimeout(async () => {
+    await loadDataFromBackend();
+    await loadCabangList();
+    renderAll();
   }, 500);
 };
 
@@ -598,26 +884,27 @@ function handleLogin() {
   }
 }
 
-function enterApp() {
+async function enterApp() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app-container').style.display = 'flex';
   
-  loadDataFromBackend().then(() => {
-    renderAll();
-    navigate(currentUser.role === 'admin' ? 'admin' : 'home');
-    
-    if (currentUser.role === 'siswa') {
-      initChat();
-      loadMotivationAndImage();
-      loadJadwalCabangSelect();
-    }
-    if (currentUser.role === 'admin') {
-      testConnSilent();
-      fillSettingsForm();
-    }
-    updateClock();
-    history.replaceState({ page: 'home' }, '');
-  });
+  await loadDataFromBackend();
+  await loadCabangList();
+  renderAll();
+  
+  navigate(currentUser.role === 'admin' ? 'admin' : 'home');
+  
+  if (currentUser.role === 'siswa') {
+    initChat();
+    loadMotivationAndImage();
+    loadJadwalCabangSelect();
+  }
+  if (currentUser.role === 'admin') {
+    testConnSilent();
+    fillSettingsForm();
+  }
+  updateClock();
+  history.replaceState({ page: 'home' }, '');
 }
 
 function handleLogout() { 
@@ -641,21 +928,22 @@ function navigate(page) {
       kalkulator: 'Kalkulator', jadwal: 'Jadwal & Alarm', absen: 'Absen Digital', 
       analisa: 'Analisa', psikotes: 'Psikotes', bk: 'Konseling', 
       myweb: 'My Web', profil: 'Profil Saya', aktivitas: 'Ringkasan Aktivitas', 
-      admin: 'Admin Dashboard' 
+      admin: 'Admin Dashboard', report: 'Report Absensi'
     };
     document.getElementById('subTitle').textContent = titles[page] || page;
     document.getElementById('subBack').onclick = (page === 'modul' && modLv > 0) ? modBack : goHome;
   }
   
   document.querySelectorAll('.bb').forEach(b => b.classList.remove('act'));
-  if (page === 'home') document.querySelectorAll('.bb')[0].classList.add('act');
-  if (page === 'modul') document.querySelectorAll('.bb')[1].classList.add('act');
-  if (page === 'absen') document.querySelectorAll('.bb')[2].classList.add('act');
-  if (page === 'profil') document.querySelectorAll('.bb')[3].classList.add('act');
+  let bbMap = { home: 0, modul: 1, absen: 2, report: 3 };
+  if (bbMap[page] !== undefined) {
+    document.querySelectorAll('.bb')[bbMap[page]]?.classList.add('act');
+  }
   
   if (page === 'home') renderHome();
   else if (page === 'modul') { modLv = 0; modKls = null; modMap = null; renderModul(); }
-  else if (page === 'absen') renderAbsen();
+  else if (page === 'absen') { renderAbsen(); }
+  else if (page === 'report') { loadReport(); }
   else if (page === 'myweb') renderMyWeb();
   else if (page === 'profil') renderProfil();
   else if (page === 'aktivitas') renderAktivitas();
@@ -776,28 +1064,21 @@ function openPsikotesLink() { if (appData.settings.linkPsikotes) window.open(app
 
 // ============ ABSEN QR ============
 function renderAbsen() {
-  let cabangs = [];
-  appData.jadwal.forEach(j => { if (j.cabang && cabangs.indexOf(j.cabang) === -1) cabangs.push(j.cabang); });
-  if (!cabangs.length) cabangs.push('Cabang Utama');
-  absCab = cabangs[0];
-  document.getElementById('absCabTabs').innerHTML = cabangs.map((c, i) => '<button class="tbtn' + (i === 0 ? ' act' : '') + '" onclick="switchAbsCab(\'' + esc(c) + '\',this)">' + c + '</button>').join('');
-  document.getElementById('absen-cabang').value = absCab;
-}
-
-function switchAbsCab(c, btn) {
-  absCab = c;
-  document.getElementById('absen-cabang').value = c;
-  document.querySelectorAll('#absCabTabs .tbtn').forEach(b => b.classList.remove('act'));
-  btn.classList.add('act');
+  let cabangs = appData.cabang || [];
+  if (!cabangs.length) {
+    appData.jadwal.forEach(j => { if (j.cabang && cabangs.indexOf(j.cabang) === -1) cabangs.push(j.cabang); });
+  }
+  renderAbsenTabs(cabangs);
 }
 
 function generateAndSave() {
   let nama = document.getElementById('absen-nama').value.trim();
   let kelas = document.getElementById('absen-kelas').value.trim();
-  let cabang = document.getElementById('absen-cabang').value.trim();
+  let cabang = document.getElementById('absen-cabang').value;
   let nis = document.getElementById('absen-nis').value.trim();
   
   if (!nama || !nis) return showToast("Nama & NIS wajib!", 'error');
+  if (!cabang) return showToast("Pilih cabang dulu!", 'error');
   
   document.getElementById('qrcode').innerHTML = "";
   new QRCode(document.getElementById('qrcode'), { 
@@ -901,8 +1182,10 @@ function loadJadwalCabangSelect() {
   let cabangs = [];
   appData.jadwal.forEach(j => { if (j.cabang && cabangs.indexOf(j.cabang) === -1) cabangs.push(j.cabang); });
   let sel = document.getElementById('filter-cabang');
-  sel.innerHTML = cabangs.map(c => '<option value="' + c + '">' + c + '</option>').join('');
-  if (cabangs.length) loadJadwal();
+  if (sel) {
+    sel.innerHTML = cabangs.map(c => '<option value="' + c + '">' + c + '</option>').join('');
+    if (cabangs.length) loadJadwal();
+  }
 }
 
 function loadJadwal() {
@@ -1190,7 +1473,6 @@ setInterval(() => {
 console.log('✅ AlphaBest App loaded!');
 console.log('🌐 Apps Script URL:', APP_SCRIPT_URL);
 console.log('👤 Current user:', currentUser);
-console.log('📦 App data:', appData);
 
 logAkt('Login sebagai ' + currentUser.name, '#12B5C1');
 </script>
