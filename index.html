@@ -230,11 +230,7 @@ body{background:var(--bg);color:var(--tx);height:100vh;overflow:hidden;display:f
     <div class="st sc2"><div class="st-n" id="stKelas">0</div><div class="st-l">Jumlah Kelas</div><div class="st-s" id="stKelasS">-</div></div>
     <div class="st sc3"><div class="st-n" id="stKbm">0</div><div class="st-l">KBM Hari Ini</div><div class="st-s">Aktif</div></div>
   </div>
-  <div style="display:flex;gap:8px;margin:4px 0 8px;flex-wrap:wrap">
-    <button class="btn btn-sm btn-sync" onclick="manualSync()"><i class="fas fa-sync"></i> Refresh</button>
-    <button class="btn btn-sm btn-t" onclick="navigate('admin')" style="background:linear-gradient(135deg,#6C5CE7,#A29BFE)"><i class="fas fa-cog"></i> Admin</button>
-    <button class="btn btn-sm" style="background:linear-gradient(135deg,#00B894,#00A381);color:#fff" onclick="navigate('report')"><i class="fas fa-file-alt"></i> Report</button>
-  </div>
+  
   <div class="cd"><div style="font-size:12px;font-weight:700;color:var(--toska-d);margin-bottom:8px"><i class="fas fa-chalkboard-teacher"></i> KBM Aktif Hari Ini</div><div id="kbmList"><div class="empty" style="padding:6px"><p>-</p></div></div></div>
   <div class="sec-t">Menu Utama</div>
   <div class="mgrid">
@@ -252,6 +248,11 @@ body{background:var(--bg);color:var(--tx);height:100vh;overflow:hidden;display:f
     <div class="mi" onclick="navigate('aktivitas')"><div class="mic" style="background:linear-gradient(135deg,#FD79A8,#E84393)"><i class="fas fa-history"></i></div><div class="mil">Aktivitas</div></div>
     <div class="mi" onclick="navigate('report')"><div class="mic" style="background:linear-gradient(135deg,#FDCB6E,#E17055)"><i class="fas fa-file-alt"></i></div><div class="mil">Report</div></div>
   </div>
+	<div style="display:flex;gap:8px;margin:4px 0 8px;flex-wrap:wrap">
+	<button class="btn btn-sm btn-sync" onclick="manualSync()"><i class="fas fa-sync"></i> Refresh</button>
+	<button class="btn btn-sm btn-t btn-admin" onclick="navigate('admin')" style="background:linear-gradient(135deg,#6C5CE7,#A29BFE)"><i class="fas fa-cog"></i> Admin</button>
+	<button class="btn btn-sm btn-report" style="background:linear-gradient(135deg,#00B894,#00A381);color:#fff" onclick="navigate('report')"><i class="fas fa-file-alt"></i> Report</button>
+	</div>
 </section>
 
 <!-- ============ MODUL ============ -->
@@ -982,8 +983,18 @@ function renderHome() {
   } else {
     document.getElementById('kbmList').innerHTML = '<div class="empty" style="padding:6px"><p>Tidak ada KBM hari ini</p></div>';
   }
+  
+  // 🔥 TOMBOL ADMIN HANYA UNTUK ADMIN
+  let btnAdmin = document.querySelector('.btn-admin');
+  let btnReport = document.querySelector('.btn-report');
+  if (currentUser.role === 'admin') {
+    if (btnAdmin) btnAdmin.style.display = 'inline-flex';
+    if (btnReport) btnReport.style.display = 'inline-flex';
+  } else {
+    if (btnAdmin) btnAdmin.style.display = 'none';
+    if (btnReport) btnReport.style.display = 'none';
+  }
 }
-
 // ============ MOTIVASI ============
 function loadMotivationAndImage() {
   let apiKey = appData.settings.apiKey || '';
